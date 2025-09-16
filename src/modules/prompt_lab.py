@@ -321,7 +321,7 @@ Provide a thorough, multi-dimensional analysis that reveals both obvious and sub
                 chatbot = st.session_state.chatbot
                 response, metadata = chatbot.get_response(
                     messages=messages,
-                    model=st.session_state.get("selected_model", "gpt-4o"),
+                    model=st.session_state.get("current_model", "gpt-4o"),
                     temperature=0.7,
                     max_tokens=2000
                 )

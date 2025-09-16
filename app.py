@@ -59,8 +59,9 @@ def main():
 def handle_chat_input(selected_model: str, parameters: dict):
     """Handle user chat input and generate AI response"""
     
-    # Store selected model in session state for prompt lab access
-    st.session_state.selected_model = selected_model
+    # Store selected model in session state for prompt lab access (avoid key conflict)
+    if "current_model" not in st.session_state or st.session_state.current_model != selected_model:
+        st.session_state.current_model = selected_model
     
     if prompt := st.chat_input("Type your message here..."):
         if not st.session_state.get("api_key"):
