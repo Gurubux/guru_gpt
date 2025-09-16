@@ -324,7 +324,7 @@ class UIComponents:
                     st.metric("Max Chunk Relevance", f"{metrics.get('max_chunk_relevance', 0):.2f}")
             
             # Score explanations
-            if st.button("📚 What do these scores mean?"):
+            if st.button("📚 What do these scores mean?", key=f"score_explanation_{evaluation.get('timestamp', 'default')}"):
                 st.session_state.show_score_explanations = True
     
     @staticmethod
@@ -353,7 +353,8 @@ class UIComponents:
                     st.text_area(f"📝 Chunk Preview", 
                                 chunk['chunk_preview'], 
                                 height=100, 
-                                key=f"chunk_preview_{chunk['chunk_index']}")
+                                key=f"chunk_preview_{chunk['chunk_index']}_{i}",
+                                disabled=True)
                     
                     st.markdown("---")
     
@@ -377,20 +378,20 @@ class UIComponents:
         if len(pdf_data['full_text']) > 1000:
             preview_text += "...\n\n[Content truncated for display]"
         
-        st.text_area("Full Text Preview", preview_text, height=300, disabled=True)
+        st.text_area("Full Text Preview", preview_text, height=300, disabled=True, key="pdf_full_text_preview")
         
         # Show all chunks using selectbox instead of nested expanders
         st.subheader("📑 All Chunks")
         if pdf_data['chunks']:
             chunk_options = [f"Chunk {i+1} ({len(chunk)} characters)" for i, chunk in enumerate(pdf_data['chunks'])]
-            selected_chunk_idx = st.selectbox("Select chunk to view:", range(len(chunk_options)), format_func=lambda x: chunk_options[x])
+            selected_chunk_idx = st.selectbox("Select chunk to view:", range(len(chunk_options)), format_func=lambda x: chunk_options[x], key="pdf_chunk_selector")
             
             if selected_chunk_idx is not None:
                 selected_chunk = pdf_data['chunks'][selected_chunk_idx]
-                st.text_area(f"Chunk {selected_chunk_idx + 1} Content", selected_chunk, height=200, disabled=True)
+                st.text_area(f"Chunk {selected_chunk_idx + 1} Content", selected_chunk, height=200, disabled=True, key=f"pdf_chunk_content_{selected_chunk_idx}")
         
         # Close button
-        if st.button("❌ Close Preview"):
+        if st.button("❌ Close Preview", key="close_pdf_preview"):
             st.session_state.show_pdf_preview = False
             st.rerun()
     
@@ -416,6 +417,6 @@ class UIComponents:
             """)
         
         # Close button
-        if st.button("❌ Close Explanation"):
+        if st.button("❌ Close Explanation", key="close_score_explanation"):
             st.session_state.show_score_explanations = False
             st.rerun()
