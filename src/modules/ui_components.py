@@ -129,7 +129,7 @@ class UIComponents:
             
             # Show PDF content preview
             if st.button("📋 Preview PDF Content"):
-                UIComponents.show_pdf_preview(pdf_data)
+                st.session_state.show_pdf_preview = True
             
             if st.button("Remove PDF Context"):
                 del st.session_state.pdf_data
@@ -254,6 +254,16 @@ class UIComponents:
     @staticmethod
     def render_chat_interface():
         """Render the main chat interface"""
+        # Show PDF preview if requested
+        if st.session_state.get("show_pdf_preview", False) and "pdf_data" in st.session_state:
+            UIComponents.show_pdf_preview(st.session_state.pdf_data)
+            st.markdown("---")
+        
+        # Show score explanations if requested
+        if st.session_state.get("show_score_explanations", False):
+            UIComponents.show_score_explanations()
+            st.markdown("---")
+        
         st.header("💬 Chat")
         
         # Display chat messages (exclude system message)
@@ -315,7 +325,7 @@ class UIComponents:
             
             # Score explanations
             if st.button("📚 What do these scores mean?"):
-                UIComponents.show_score_explanations()
+                st.session_state.show_score_explanations = True
     
     @staticmethod
     def display_pdf_context_details(chunks_info: List[Dict]):
@@ -349,41 +359,49 @@ class UIComponents:
     
     @staticmethod
     def show_pdf_preview(pdf_data: Dict):
-        """Show PDF content preview in a modal-like expander"""
-        with st.expander("📄 PDF Content Preview", expanded=True):
-            st.subheader(f"📄 {pdf_data['filename']}")
+        """Show PDF content preview without nested expanders"""
+        st.subheader(f"📄 {pdf_data['filename']} - Content Preview")
+        
+        # Summary stats
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Total Characters", pdf_data['total_chars'])
+        with col2:
+            st.metric("Total Chunks", pdf_data['num_chunks'])
+        with col3:
+            st.metric("Avg Chunk Size", pdf_data['total_chars'] // pdf_data['num_chunks'])
+        
+        # Show first 1000 characters
+        st.subheader("📖 Content Preview (First 1000 characters)")
+        preview_text = pdf_data['full_text'][:1000]
+        if len(pdf_data['full_text']) > 1000:
+            preview_text += "...\n\n[Content truncated for display]"
+        
+        st.text_area("Full Text Preview", preview_text, height=300, disabled=True)
+        
+        # Show all chunks using selectbox instead of nested expanders
+        st.subheader("📑 All Chunks")
+        if pdf_data['chunks']:
+            chunk_options = [f"Chunk {i+1} ({len(chunk)} characters)" for i, chunk in enumerate(pdf_data['chunks'])]
+            selected_chunk_idx = st.selectbox("Select chunk to view:", range(len(chunk_options)), format_func=lambda x: chunk_options[x])
             
-            # Summary stats
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Total Characters", pdf_data['total_chars'])
-            with col2:
-                st.metric("Total Chunks", pdf_data['num_chunks'])
-            with col3:
-                st.metric("Avg Chunk Size", pdf_data['total_chars'] // pdf_data['num_chunks'])
-            
-            # Show first 1000 characters
-            st.subheader("📖 Content Preview (First 1000 characters)")
-            preview_text = pdf_data['full_text'][:1000]
-            if len(pdf_data['full_text']) > 1000:
-                preview_text += "...\n\n[Content truncated for display]"
-            
-            st.text_area("", preview_text, height=300, disabled=True)
-            
-            # Show all chunks
-            st.subheader("📑 All Chunks")
-            for i, chunk in enumerate(pdf_data['chunks']):
-                with st.expander(f"Chunk {i+1} ({len(chunk)} characters)"):
-                    st.text_area("", chunk, height=150, key=f"full_chunk_{i}", disabled=True)
+            if selected_chunk_idx is not None:
+                selected_chunk = pdf_data['chunks'][selected_chunk_idx]
+                st.text_area(f"Chunk {selected_chunk_idx + 1} Content", selected_chunk, height=200, disabled=True)
+        
+        # Close button
+        if st.button("❌ Close Preview"):
+            st.session_state.show_pdf_preview = False
+            st.rerun()
     
     @staticmethod
     def show_score_explanations():
         """Show explanations for all evaluation metrics"""
+        st.subheader("📚 Evaluation Metrics Explained")
+        
         evaluator = st.session_state.get("response_evaluator")
         if evaluator:
             explanations = evaluator.get_score_explanation()
-            
-            st.subheader("📚 Evaluation Metrics Explained")
             
             for metric, explanation in explanations.items():
                 st.write(f"**{metric.replace('_', ' ').title()}**: {explanation}")
@@ -396,3 +414,8 @@ class UIComponents:
             - **3-4**: Poor - Significant issues requiring attention
             - **0-2**: Very Poor - Major problems in multiple areas
             """)
+        
+        # Close button
+        if st.button("❌ Close Explanation"):
+            st.session_state.show_score_explanations = False
+            st.rerun()
