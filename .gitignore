@@ -1,1 +1,35 @@
+# Environment variables
 .env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Chat exports
+chat_history/
+*.txt
+
+# Streamlit cache
+.streamlit/
+
+# Temporary files
+*.tmp
+*.temp

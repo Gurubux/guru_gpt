@@ -1,10 +1,11 @@
-# GPT-4o Chat Assistant
+# Advanced GPT Chat Assistant
 
-A simple chat application built with Streamlit and OpenAI's GPT-4o model. Perfect for AI Engineer interview preparation and demonstrating LLM integration skills.
+A professional, modular chat application with PDF context support built with Streamlit and OpenAI's latest GPT models. Perfect for AI Engineer interview preparation and demonstrating advanced LLM integration skills.
 
 ## Features
 
 - 🤖 **Multi-Model Support**: Choose from GPT-4o, GPT-4o Mini, and GPT-4 Turbo
+- 📄 **PDF Context Integration**: Upload and chat with PDF documents
 - 💬 **Interactive Streamlit UI**: Modern, professional chat interface
 - 📝 **Chat History Management**: Persistent conversations with export functionality
 - ⚙️ **Advanced Parameters**: Temperature, max tokens, top-p, frequency/presence penalties
@@ -14,6 +15,7 @@ A simple chat application built with Streamlit and OpenAI's GPT-4o model. Perfec
 - 💰 **Cost Calculation**: Accurate cost tracking per model and conversation
 - 📈 **Session Statistics**: Cumulative stats for tokens, costs, and message counts
 - 📋 **Export Features**: Download chat history as text files
+- 🏗️ **Modular Architecture**: Clean, maintainable codebase with separation of concerns
 
 ## Setup Instructions
 
@@ -47,19 +49,37 @@ The app will open in your browser at `http://localhost:8501`
 
 ```
 guru_gpt/
-├── app.py              # Main Streamlit application
-├── requirements.txt    # Python dependencies
-├── env_template.txt    # Environment variables template
-└── README.md          # This file
+├── app.py                          # Main Streamlit application (clean & modular)
+├── src/                            # Source code modules
+│   ├── modules/                    # Core functionality modules
+│   │   ├── chatbot.py             # GPT chatbot with context support
+│   │   ├── pdf_processor.py       # PDF upload and text extraction
+│   │   └── ui_components.py       # Streamlit UI components
+│   └── utils/                      # Utility modules
+│       ├── config.py              # Configuration and constants
+│       └── session_manager.py     # Session state management
+├── requirements.txt                # Python dependencies
+├── env_template.txt               # Environment variables template
+├── setup.py                       # Automated setup script
+└── README.md                      # This file
 ```
 
 ## Usage
 
+### Basic Chat
 1. Start the application using `streamlit run app.py`
 2. Make sure your OpenAI API key is properly configured
-3. Type your message in the chat input
-4. The GPT-4o model will respond to your queries
-5. Use the sidebar to clear chat history or view model information
+3. Choose your preferred GPT model from the sidebar
+4. Adjust parameters (temperature, max tokens, etc.) as needed
+5. Type your message in the chat input
+6. View detailed response analytics for each interaction
+
+### PDF Context Chat
+1. Upload a PDF file using the "📄 PDF Context" section in the sidebar
+2. Click "Process PDF" to extract and chunk the text
+3. Your subsequent chat messages will use the PDF content as context
+4. The AI will answer questions based on both the conversation and PDF content
+5. Remove PDF context anytime using the "Remove PDF Context" button
 
 ## Features Explained
 
@@ -82,6 +102,13 @@ guru_gpt/
 - **Response Time**: Performance monitoring
 - **Session Stats**: Cumulative metrics across conversations
 
+### PDF Context Integration
+- **File Upload**: Support for PDF documents up to 10MB
+- **Text Extraction**: Automatic text extraction from PDF pages
+- **Smart Chunking**: Intelligent text chunking with overlap for better context
+- **Relevance Matching**: AI selects most relevant PDF chunks for each query
+- **Context Management**: Easy addition and removal of PDF context
+
 ### Professional UI
 - **Model Selection**: Easy switching between GPT models
 - **Parameter Controls**: Real-time adjustment with helpful tooltips
@@ -89,18 +116,37 @@ guru_gpt/
 - **Export Functionality**: Download conversations as text files
 - **Session Management**: Clear history and reset statistics
 
-## Next Steps for Interview Prep
+### Modular Architecture
+- **Clean Separation**: Distinct modules for chatbot, PDF processing, and UI
+- **Maintainable Code**: Easy to extend and modify individual components
+- **Reusable Components**: Modular design enables code reuse
+- **Production Ready**: Professional code structure suitable for deployment
 
-This basic chatbot demonstrates:
-- LLM API integration
-- UI development with Streamlit
-- Session management
-- Error handling
-- Environment configuration
+## Interview Preparation Value
 
-Consider extending with:
-- Different model options
-- Custom system prompts
-- File upload capabilities
-- Chat export functionality
-- User authentication
+This professional application demonstrates key AI Engineer skills:
+
+### Technical Skills
+- **LLM Integration**: Multi-model API usage with OpenAI's latest models
+- **Document Processing**: PDF text extraction and intelligent chunking
+- **Context Management**: Advanced prompt engineering with document context
+- **UI/UX Development**: Professional Streamlit interface design
+- **Code Architecture**: Modular, maintainable, and scalable codebase
+- **Error Handling**: Production-ready error management and validation
+- **Performance Monitoring**: Token usage, cost tracking, and response metrics
+
+### Software Engineering Practices
+- **Modular Design**: Clean separation of concerns across multiple modules
+- **Configuration Management**: Centralized configuration and constants
+- **Session Management**: Stateful application with proper state handling
+- **Documentation**: Comprehensive documentation and code comments
+- **Version Control**: Professional git workflow and commit practices
+
+### Production Readiness
+- **Security**: Environment-based API key management
+- **Scalability**: Modular architecture supports easy feature addition
+- **Monitoring**: Detailed analytics and performance tracking
+- **User Experience**: Intuitive interface with helpful tooltips and feedback
+- **Export Capabilities**: Data portability and user convenience features
+
+Perfect for showcasing in AI Engineer interviews and technical demonstrations!

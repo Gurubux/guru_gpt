@@ -67,10 +67,9 @@ def handle_chat_input(selected_model: str, parameters: dict):
         with st.chat_message("assistant"):
             with st.spinner("🤔 Thinking..."):
                 # Get PDF context if available
-                pdf_context, chunks_info = SessionManager.get_pdf_context(prompt)
+                pdf_context = SessionManager.get_pdf_context(prompt)
                 
                 chatbot = st.session_state.chatbot
-                evaluator = st.session_state.response_evaluator
                 
                 if pdf_context:
                     # Use PDF context for response
@@ -88,23 +87,11 @@ def handle_chat_input(selected_model: str, parameters: dict):
                         **parameters
                     )
                 
-                # Evaluate the response
-                evaluation = evaluator.evaluate_response(
-                    query=prompt,
-                    response=response,
-                    context=pdf_context,
-                    pdf_chunks_info=chunks_info
-                )
-                
-                # Add evaluation and chunks info to metadata
-                metadata["evaluation"] = evaluation
-                metadata["chunks_info"] = chunks_info
-                
                 # Display response
                 st.markdown(response)
                 
-                # Display metadata with evaluation
-                UIComponents.display_response_metadata(metadata, evaluation, chunks_info)
+                # Display metadata
+                UIComponents.display_response_metadata(metadata)
                 
                 # Update session stats
                 SessionManager.update_conversation_stats(metadata)
