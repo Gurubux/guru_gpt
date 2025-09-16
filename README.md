@@ -6,7 +6,8 @@ A professional, modular chat application with PDF context support built with Str
 
 - 🤖 **Multi-Model Support**: Choose from GPT-4o, GPT-4o Mini, and GPT-4 Turbo
 - 📄 **PDF Context Integration**: Upload and chat with PDF documents
-- 💬 **Interactive Streamlit UI**: Modern, professional chat interface
+- 🧪 **Prompt Engineering Lab**: Advanced prompt testing with professional templates
+- 💬 **Interactive Streamlit UI**: Modern, professional chat interface with tabs
 - 📝 **Chat History Management**: Persistent conversations with export functionality
 - ⚙️ **Advanced Parameters**: Temperature, max tokens, top-p, frequency/presence penalties
 - 🔐 **Secure API Key Management**: Environment variable based configuration
@@ -14,7 +15,7 @@ A professional, modular chat application with PDF context support built with Str
 - ⏱️ **Response Metrics**: Response time, model info, and detailed analytics
 - 💰 **Cost Calculation**: Accurate cost tracking per model and conversation
 - 📈 **Session Statistics**: Cumulative stats for tokens, costs, and message counts
-- 📋 **Export Features**: Download chat history as text files
+- 📋 **Export Features**: Download chat history and prompt test results
 - 🏗️ **Modular Architecture**: Clean, maintainable codebase with separation of concerns
 
 ## Setup Instructions
@@ -66,7 +67,8 @@ guru_gpt/
 
 ## Usage
 
-### Basic Chat
+### 💬 Chat Assistant Tab
+#### Basic Chat
 1. Start the application using `streamlit run app.py`
 2. Make sure your OpenAI API key is properly configured
 3. Choose your preferred GPT model from the sidebar
@@ -74,12 +76,33 @@ guru_gpt/
 5. Type your message in the chat input
 6. View detailed response analytics for each interaction
 
-### PDF Context Chat
+#### PDF Context Chat
 1. Upload a PDF file using the "📄 PDF Context" section in the sidebar
 2. Click "Process PDF" to extract and chunk the text
 3. Your subsequent chat messages will use the PDF content as context
 4. The AI will answer questions based on both the conversation and PDF content
 5. Remove PDF context anytime using the "Remove PDF Context" button
+
+### 🧪 Prompt Lab Tab
+#### Using Pre-built Templates
+1. Upload and process a PDF first (required for context)
+2. Navigate to the "🧪 Prompt Lab" tab
+3. Select from professional prompt templates:
+   - **📝 Document Summarization**: Generate comprehensive summaries
+   - **🔍 Fact Verification**: Verify claims against document content
+   - **🎯 Content Matching**: Calculate similarity scores (resume-job matching)
+   - **❓ Question Answering**: Extract specific information
+   - **📊 Deep Content Analysis**: Comprehensive thematic analysis
+4. Edit the system and user prompts as needed
+5. Add template-specific inputs (claims, comparison content, questions)
+6. Click "🚀 Test" to execute and analyze results
+
+#### Creating Custom Prompts
+1. Select "🎨 Custom Prompt (Create Your Own)"
+2. Write your system prompt (AI instructions)
+3. Write your user prompt (use `{context}` for PDF content)
+4. Test your prompt and analyze the results
+5. Export results for documentation and learning
 
 ## Features Explained
 
@@ -116,8 +139,16 @@ guru_gpt/
 - **Export Functionality**: Download conversations as text files
 - **Session Management**: Clear history and reset statistics
 
+### Prompt Engineering Lab
+- **Professional Templates**: 5+ pre-built prompt templates for common use cases
+- **Editable Prompts**: Modify system and user prompts in real-time
+- **Template-Specific Inputs**: Custom fields for fact-checking, matching, Q&A
+- **Custom Prompt Creation**: Build and test your own prompting strategies
+- **Comprehensive Analysis**: Quality scoring and detailed evaluation of results
+- **Export Functionality**: Save test results and prompt configurations
+
 ### Modular Architecture
-- **Clean Separation**: Distinct modules for chatbot, PDF processing, and UI
+- **Clean Separation**: Distinct modules for chatbot, PDF processing, UI, and prompt lab
 - **Maintainable Code**: Easy to extend and modify individual components
 - **Reusable Components**: Modular design enables code reuse
 - **Production Ready**: Professional code structure suitable for deployment
@@ -128,12 +159,14 @@ This professional application demonstrates key AI Engineer skills:
 
 ### Technical Skills
 - **LLM Integration**: Multi-model API usage with OpenAI's latest models
+- **Prompt Engineering**: Professional template system with custom prompt creation
 - **Document Processing**: PDF text extraction and intelligent chunking
 - **Context Management**: Advanced prompt engineering with document context
-- **UI/UX Development**: Professional Streamlit interface design
+- **UI/UX Development**: Professional Streamlit interface with tab navigation
 - **Code Architecture**: Modular, maintainable, and scalable codebase
 - **Error Handling**: Production-ready error management and validation
 - **Performance Monitoring**: Token usage, cost tracking, and response metrics
+- **Evaluation Systems**: Comprehensive AI response quality assessment
 
 ### Software Engineering Practices
 - **Modular Design**: Clean separation of concerns across multiple modules

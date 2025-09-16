@@ -13,6 +13,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from src.utils.config import UI_CONFIG
 from src.utils.session_manager import SessionManager
 from src.modules.ui_components import UIComponents
+from src.modules.prompt_lab import PromptLab
 
 
 def main():
@@ -31,21 +32,35 @@ def main():
     
     # Header
     st.title("🤖 Advanced GPT Chat Assistant")
-    st.markdown("*Professional AI chat interface with PDF context and detailed analytics*")
-    st.markdown("---")
+    st.markdown("*Professional AI chat interface with PDF context, detailed analytics, and prompt engineering lab*")
     
-    # Render sidebar and get current settings
-    selected_model, parameters = UIComponents.render_sidebar()
+    # Main tabs
+    tab1, tab2 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab"])
     
-    # Render main chat interface
-    UIComponents.render_chat_interface()
+    with tab1:
+        # Render sidebar and get current settings
+        selected_model, parameters = UIComponents.render_sidebar()
+        
+        # Render main chat interface
+        UIComponents.render_chat_interface()
+        
+        # Handle chat input
+        handle_chat_input(selected_model, parameters)
     
-    # Handle chat input
-    handle_chat_input(selected_model, parameters)
+    with tab2:
+        # Initialize prompt lab
+        if "prompt_lab" not in st.session_state:
+            st.session_state.prompt_lab = PromptLab()
+        
+        # Render prompt lab interface
+        st.session_state.prompt_lab.render_prompt_lab_interface()
 
 
 def handle_chat_input(selected_model: str, parameters: dict):
     """Handle user chat input and generate AI response"""
+    
+    # Store selected model in session state for prompt lab access
+    st.session_state.selected_model = selected_model
     
     if prompt := st.chat_input("Type your message here..."):
         if not st.session_state.get("api_key"):
