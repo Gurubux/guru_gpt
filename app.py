@@ -15,6 +15,7 @@ from src.utils.session_manager import SessionManager
 from src.modules.ui_components import UIComponents
 from src.modules.prompt_lab import PromptLab
 from src.modules.ai_agent import AIAgent
+from src.modules.mcp_server import render_mcp_interface
 
 
 def main():
@@ -36,7 +37,7 @@ def main():
     st.markdown("*Professional AI chat interface with PDF context, detailed analytics, and prompt engineering lab*")
     
     # Main tabs
-    tab1, tab2, tab3 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab", "🤖 AI Agent"])
+    tab1, tab2, tab3, tab4 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab", "🤖 AI Agent", "🔌 MCP Server"])
     
     with tab1:
         # Render sidebar and get current settings
@@ -63,6 +64,10 @@ def main():
         
         # Render AI agent interface
         st.session_state.ai_agent.render_agent_interface()
+    
+    with tab4:
+        # Render MCP server interface
+        render_mcp_interface()
 
 
 def handle_chat_input(selected_model: str, parameters: dict):

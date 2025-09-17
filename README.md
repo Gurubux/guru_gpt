@@ -58,6 +58,7 @@ This application shows exactly how AI can transform business operations, making 
 - 📄 **PDF Context Integration**: Upload and chat with PDF documents
 - 🧪 **Prompt Engineering Lab**: Advanced prompt testing with professional templates
 - 🤖 **AI Agent System**: Weather and news fetching with AI-powered summaries
+- 🔌 **MCP Server**: Model Context Protocol implementation for standardized AI-tool communication
 - 💬 **Interactive Streamlit UI**: Modern, professional chat interface with tabs
 - 📝 **Chat History Management**: Persistent conversations with export functionality
 - ⚙️ **Advanced Parameters**: Temperature, max tokens, top-p, frequency/presence penalties
@@ -178,6 +179,27 @@ guru_gpt/
 - **AI Summarization**: Intelligent analysis of raw data with actionable insights
 - **Debug Mode**: Troubleshoot API responses and data quality
 - **Multi-Source Reliability**: Never fails completely due to layered fallback architecture
+
+### 🔌 MCP Server Tab
+#### MCP Server Control
+1. Navigate to the "🔌 MCP Server" tab
+2. Click "🚀 Start MCP Server" to initialize the MCP server
+3. View server status, ID, and request count in real-time
+4. Use "⏹️ Stop Server" or "🔄 Restart Server" as needed
+
+#### Tool Discovery & Execution
+1. Select from available MCP tools: get_weather, get_news, get_agent_status
+2. View tool schemas and parameter requirements
+3. Fill in required parameters for your selected tool
+4. Click the tool execution button to call the MCP server
+5. View structured MCP responses with AI-enhanced data
+
+#### MCP Features
+- **Tool Discovery**: See all available MCP tools and their capabilities
+- **Schema Validation**: Tools describe their parameters for AI understanding
+- **Request History**: Track all MCP tool calls and responses
+- **Live Testing**: Interactive demonstration of MCP protocol
+- **Error Handling**: Standardized error responses across all tools
 
 ## Features Explained
 
@@ -416,6 +438,228 @@ By studying this AI Agent implementation, you'll understand:
 5. **Production Architecture**: Building systems ready for enterprise deployment
 
 This demonstrates the **evolution from simple automation to intelligent agents**—a critical distinction in modern AI system design.
+
+## 🔌 MCP Server - Model Context Protocol
+
+### The Next Evolution: From AI Agents to MCP Servers
+
+The MCP (Model Context Protocol) represents the latest evolution in AI architecture, moving beyond standalone AI agents to **standardized, interoperable AI-tool communication systems**.
+
+#### **🔄 AI Architecture Evolution Timeline**
+
+```mermaid
+graph TD
+    A[Traditional APIs<br/>2000s] --> B[AI Agents<br/>2020s]
+    B --> C[MCP Servers<br/>2024+]
+    C --> D[Autonomous MCP Networks<br/>Future]
+    
+    A1[Fixed Endpoints<br/>Manual Integration<br/>Human-Driven] --> A
+    B1[Autonomous Decision Making<br/>Multi-Source Fusion<br/>Intelligent Recovery] --> B
+    C1[Standardized Communication<br/>Dynamic Discovery<br/>AI-Driven Orchestration] --> C
+    D1[Self-Organizing<br/>Distributed Intelligence<br/>Emergent Capabilities] --> D
+    
+    style A fill:#ffcccc
+    style B fill:#ffffcc
+    style C fill:#ccffcc
+    style D fill:#ccccff
+```
+
+### 🎯 **What is MCP (Model Context Protocol)?**
+
+MCP is a **standardized protocol** that enables AI models to discover, understand, and interact with external tools and data sources in a consistent, reliable way.
+
+#### **Key MCP Concepts**
+
+| **Concept** | **Description** | **Benefit** |
+|-------------|-----------------|-------------|
+| **Tool Discovery** | AI automatically finds available capabilities | No manual integration needed |
+| **Structured Communication** | Standardized request/response formats | Consistent behavior across tools |
+| **Capability Description** | Tools describe themselves to AI | AI understands what each tool can do |
+| **Error Standardization** | Uniform error handling across all tools | Reliable error recovery |
+
+### 🏗️ **MCP Architecture Components**
+
+#### **1. MCP Server (Our Implementation)**
+```python
+class MCPServer:
+    """Wraps AI Agent capabilities as MCP tools"""
+    
+    def __init__(self):
+        self.capabilities = {
+            "tools": [
+                {
+                    "name": "get_weather",
+                    "description": "Get weather information for a location",
+                    "inputSchema": {...}  # AI understands parameters
+                },
+                {
+                    "name": "get_news", 
+                    "description": "Get news articles for a category",
+                    "inputSchema": {...}
+                }
+            ]
+        }
+```
+
+#### **2. MCP Client (AI Model Interface)**
+```python
+class MCPClient:
+    """How AI models interact with MCP servers"""
+    
+    def call_tool(self, tool_name, parameters):
+        """AI calls tools through standardized interface"""
+        return self.server.handle_tool_call(tool_name, parameters)
+```
+
+#### **3. Tool Orchestration**
+- **AI-Driven**: AI decides which tools to use and when
+- **Dynamic Discovery**: AI learns about new capabilities automatically
+- **Intelligent Chaining**: AI can combine multiple tools for complex tasks
+
+### 🆚 **MCP vs Traditional Approaches**
+
+#### **Traditional API Integration**
+```python
+# Manual, rigid integration
+def get_weather(location):
+    response = requests.get(f"https://api.weather.com/{location}")
+    return response.json()
+
+# Fixed, single-purpose
+def get_news(category):
+    response = requests.get(f"https://api.news.com/{category}")
+    return response.json()
+```
+
+#### **MCP Server Approach**
+```python
+# AI discovers and uses tools dynamically
+def ai_workflow(user_request):
+    # AI discovers available tools
+    tools = mcp_client.list_available_tools()
+    
+    # AI decides which tools to use
+    if "weather" in user_request:
+        weather_tool = next(t for t in tools if t["name"] == "get_weather")
+        weather_data = mcp_client.call_tool("get_weather", parameters)
+    
+    if "news" in user_request:
+        news_tool = next(t for t in tools if t["name"] == "get_news")
+        news_data = mcp_client.call_tool("get_news", parameters)
+    
+    # AI combines results intelligently
+    return ai_combine_results(weather_data, news_data)
+```
+
+### 🎯 **Real-World MCP Use Cases**
+
+#### **Enterprise AI Orchestration**
+- **Multi-Tool Workflows**: AI chains weather + news + calendar + email tools
+- **Dynamic Capability Discovery**: New tools added without code changes
+- **Cross-Platform Integration**: AI works across different systems seamlessly
+
+#### **AI Development Platforms**
+- **Tool Marketplace**: Developers publish MCP-compatible tools
+- **AI Model Agnostic**: Same tools work with GPT, Claude, Gemini, etc.
+- **Rapid Prototyping**: Quick integration of new capabilities
+
+#### **Autonomous AI Systems**
+- **Self-Configuring**: AI discovers and configures its own toolset
+- **Adaptive Behavior**: AI learns which tools work best for different tasks
+- **Distributed Intelligence**: Multiple AI systems share tools via MCP
+
+### 💡 **MCP Implementation in Our Project**
+
+#### **What We Built**
+1. **MCP Server**: Wraps our AI Agent as MCP-compatible tools
+2. **Tool Definitions**: Weather, news, and status tools with full schemas
+3. **MCP Client**: Demonstrates how AI would interact with our server
+4. **Interactive UI**: Live demonstration of MCP tool calls
+
+#### **Key Features**
+- **Tool Discovery**: AI can see all available capabilities
+- **Parameter Validation**: Tools describe their required inputs
+- **Error Handling**: Standardized error responses
+- **Request History**: Track all MCP interactions
+- **Live Testing**: Interactive tool calling interface
+
+### 🔧 **Technical Implementation Details**
+
+#### **Tool Schema Definition**
+```json
+{
+  "name": "get_weather",
+  "description": "Get weather information for a location",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "location": {
+        "type": "string",
+        "description": "Location to get weather for"
+      },
+      "weather_type": {
+        "type": "string",
+        "enum": ["Current Weather", "5-Day Forecast", "Weather Summary"]
+      }
+    },
+    "required": ["location"]
+  }
+}
+```
+
+#### **MCP Request/Response Format**
+```json
+{
+  "tool": "get_weather",
+  "parameters": {
+    "location": "Paris, France",
+    "weather_type": "Current Weather"
+  },
+  "result": {
+    "temperature": "22°C",
+    "condition": "Partly Cloudy",
+    "ai_summary": "Perfect weather for outdoor activities!"
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+### 🚀 **Future Evolution: Autonomous MCP Networks**
+
+#### **Next Generation Capabilities**
+- **Self-Discovery**: MCP servers automatically find and connect to each other
+- **Dynamic Tool Composition**: AI creates new tools by combining existing ones
+- **Distributed Learning**: MCP networks learn from collective tool usage
+- **Emergent Intelligence**: New capabilities emerge from tool interactions
+
+#### **Business Impact**
+- **Zero-Integration AI**: AI systems that configure themselves
+- **Rapid Innovation**: New capabilities deployed instantly across all AI systems
+- **Distributed Intelligence**: AI capabilities spread across organizations
+- **Autonomous Operations**: AI systems that maintain and upgrade themselves
+
+### 🎓 **Learning Outcomes from MCP Implementation**
+
+By studying our MCP implementation, you'll understand:
+
+1. **Protocol Design**: How to create standardized AI-tool communication
+2. **Tool Orchestration**: How AI can dynamically discover and use tools
+3. **Schema Definition**: How to describe capabilities for AI consumption
+4. **Error Standardization**: How to handle failures consistently
+5. **Future Architecture**: How AI systems will evolve beyond current limitations
+
+### 🔄 **Complete Evolution Story**
+
+```
+Traditional APIs → AI Agents → MCP Servers → Autonomous Networks
+
+2000s: Manual integration, fixed endpoints, human-driven
+2020s: Autonomous agents, multi-source fusion, intelligent recovery  
+2024s: Standardized protocols, dynamic discovery, AI-driven orchestration
+Future: Self-organizing networks, emergent capabilities, distributed intelligence
+```
+
+This demonstrates the **complete journey from simple function calls to autonomous AI ecosystems**—the future of AI system architecture.
 
 ## Interview Preparation Value
 
