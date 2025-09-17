@@ -14,6 +14,7 @@ from src.utils.config import UI_CONFIG
 from src.utils.session_manager import SessionManager
 from src.modules.ui_components import UIComponents
 from src.modules.prompt_lab import PromptLab
+from src.modules.ai_agent import AIAgent
 
 
 def main():
@@ -35,7 +36,7 @@ def main():
     st.markdown("*Professional AI chat interface with PDF context, detailed analytics, and prompt engineering lab*")
     
     # Main tabs
-    tab1, tab2 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab"])
+    tab1, tab2, tab3 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab", "🤖 AI Agent"])
     
     with tab1:
         # Render sidebar and get current settings
@@ -54,6 +55,14 @@ def main():
         
         # Render prompt lab interface
         st.session_state.prompt_lab.render_prompt_lab_interface()
+    
+    with tab3:
+        # Initialize AI agent
+        if "ai_agent" not in st.session_state:
+            st.session_state.ai_agent = AIAgent()
+        
+        # Render AI agent interface
+        st.session_state.ai_agent.render_agent_interface()
 
 
 def handle_chat_input(selected_model: str, parameters: dict):

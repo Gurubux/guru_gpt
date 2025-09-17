@@ -57,6 +57,7 @@ This application shows exactly how AI can transform business operations, making 
 - 🤖 **Multi-Model Support**: Choose from GPT-4o, GPT-4o Mini, and GPT-4 Turbo
 - 📄 **PDF Context Integration**: Upload and chat with PDF documents
 - 🧪 **Prompt Engineering Lab**: Advanced prompt testing with professional templates
+- 🤖 **AI Agent System**: Weather and news fetching with AI-powered summaries
 - 💬 **Interactive Streamlit UI**: Modern, professional chat interface with tabs
 - 📝 **Chat History Management**: Persistent conversations with export functionality
 - ⚙️ **Advanced Parameters**: Temperature, max tokens, top-p, frequency/presence penalties
@@ -174,6 +175,14 @@ guru_gpt/
 - **Cost Tracking**: Per-message and session-wide cost calculation
 - **Response Time**: Performance monitoring
 - **Session Stats**: Cumulative metrics across conversations
+
+### AI Agent System
+- **Weather Service**: Real-time weather data with location-based forecasts
+- **News Service**: Latest news by category and country with multiple sources
+- **Free API Support**: Works with free services when API keys aren't available
+- **AI Summaries**: Intelligent summaries of weather and news data
+- **Query History**: Track and repeat recent agent queries
+- **Multiple Data Sources**: OpenWeatherMap, NewsAPI, and free RSS feeds
 
 ### PDF Context Integration
 - **File Upload**: Support for PDF documents up to 10MB
