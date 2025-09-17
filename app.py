@@ -16,6 +16,7 @@ from src.modules.ui_components import UIComponents
 from src.modules.prompt_lab import PromptLab
 from src.modules.ai_agent import AIAgent
 from src.modules.mcp_server import render_mcp_interface
+from src.modules.fine_tuning import FineTuningDemo
 
 
 def main():
@@ -37,7 +38,7 @@ def main():
     st.markdown("*Professional AI chat interface with PDF context, detailed analytics, and prompt engineering lab*")
     
     # Main tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab", "🤖 AI Agent", "🔌 MCP Server", "🔌 MCP Client"])
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab", "🤖 AI Agent", "🔌 MCP Server", "🔌 MCP Client", "🎯 Fine-tuning"])
     
     with tab1:
         # Render sidebar and get current settings
@@ -171,6 +172,14 @@ def main():
             - Rapid capability deployment
             - Future-proof architecture
             """)
+    
+    with tab6:
+        # Initialize fine-tuning demo
+        if "fine_tuning_demo" not in st.session_state:
+            st.session_state.fine_tuning_demo = FineTuningDemo()
+        
+        # Render fine-tuning interface
+        st.session_state.fine_tuning_demo.render_interface()
 
 
 def handle_chat_input(selected_model: str, parameters: dict):
