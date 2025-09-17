@@ -37,7 +37,7 @@ def main():
     st.markdown("*Professional AI chat interface with PDF context, detailed analytics, and prompt engineering lab*")
     
     # Main tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab", "🤖 AI Agent", "🔌 MCP Server"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["💬 Chat Assistant", "🧪 Prompt Lab", "🤖 AI Agent", "🔌 MCP Server", "🔌 MCP Client"])
     
     with tab1:
         # Render sidebar and get current settings
@@ -68,6 +68,109 @@ def main():
     with tab4:
         # Render MCP server interface
         render_mcp_interface()
+    
+    with tab5:
+        # Render MCP client interface
+        st.info("🔌 **MCP Client Tab** - This tab demonstrates how external applications can connect to our MCP server.")
+        st.markdown("""
+        **To test the MCP client:**
+        1. Run the headless MCP server: `python mcp_server.py`
+        2. Run the MCP client UI: `streamlit run mcp_client_ui.py`
+        3. Or use the command-line client: `python mcp_client.py`
+        
+        **What this demonstrates:**
+        - **Protocol Compliance**: Proper MCP protocol implementation
+        - **Tool Discovery**: AI can discover available capabilities
+        - **Structured Communication**: Standardized request/response formats
+        - **Resource Caching**: Results are cached and retrievable
+        - **Prompt Templates**: AI can get prompt templates for different tasks
+        """)
+        
+        st.markdown("---")
+        st.subheader("📋 MCP Server Commands")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**Start MCP Server:**")
+            st.code("python mcp_server.py", language="bash")
+            
+            st.markdown("**Test with Client:**")
+            st.code("python mcp_client.py", language="bash")
+        
+        with col2:
+            st.markdown("**Start Client UI:**")
+            st.code("streamlit run mcp_client_ui.py", language="bash")
+            
+            st.markdown("**Server Features:**")
+            st.markdown("""
+            - ✅ JSON-RPC 2.0 protocol
+            - ✅ Tool discovery and calling
+            - ✅ Resource caching
+            - ✅ Prompt templates
+            - ✅ Error handling
+            - ✅ Headless operation
+            """)
+        
+        st.markdown("---")
+        st.subheader("🔧 MCP Protocol Details")
+        
+        with st.expander("📋 Available MCP Methods", expanded=True):
+            st.markdown("""
+            **Core Methods:**
+            - `initialize` - Initialize MCP connection
+            - `tools/list` - List available tools
+            - `tools/call` - Execute a tool
+            - `resources/list` - List cached resources
+            - `resources/read` - Read cached resource
+            - `prompts/list` - List available prompts
+            - `prompts/get` - Get prompt template
+            """)
+        
+        with st.expander("🛠️ Available Tools", expanded=False):
+            st.markdown("""
+            **get_weather:**
+            - Parameters: location (string), weather_type (enum)
+            - Returns: Temperature, condition, AI summary, recommendations
+            
+            **get_news:**
+            - Parameters: category (enum), country (enum), article_count (int)
+            - Returns: Articles, AI summary, key themes
+            """)
+        
+        with st.expander("📝 Available Prompts", expanded=False):
+            st.markdown("""
+            **weather_summary:**
+            - Arguments: city, window
+            - Generates AI weather summary prompts
+            
+            **news_brief:**
+            - Arguments: topic, region
+            - Generates AI news briefing prompts
+            """)
+        
+        st.markdown("---")
+        st.subheader("🎯 Business Value")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("""
+            **For AI Developers:**
+            - Standardized tool integration
+            - No manual API integration
+            - Automatic capability discovery
+            - Consistent error handling
+            """)
+        
+        with col2:
+            st.markdown("""
+            **For Enterprises:**
+            - Tool marketplace compatibility
+            - Cross-platform AI integration
+            - Rapid capability deployment
+            - Future-proof architecture
+            """)
 
 
 def handle_chat_input(selected_model: str, parameters: dict):

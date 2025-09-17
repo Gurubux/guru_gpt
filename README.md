@@ -58,7 +58,8 @@ This application shows exactly how AI can transform business operations, making 
 - 📄 **PDF Context Integration**: Upload and chat with PDF documents
 - 🧪 **Prompt Engineering Lab**: Advanced prompt testing with professional templates
 - 🤖 **AI Agent System**: Weather and news fetching with AI-powered summaries
-- 🔌 **MCP Server**: Model Context Protocol implementation for standardized AI-tool communication
+- 🔌 **MCP Server**: Headless Model Context Protocol server with stdio/HTTP transport
+- 🔌 **MCP Client**: Interactive client for testing MCP server functionality
 - 💬 **Interactive Streamlit UI**: Modern, professional chat interface with tabs
 - 📝 **Chat History Management**: Persistent conversations with export functionality
 - ⚙️ **Advanced Parameters**: Temperature, max tokens, top-p, frequency/presence penalties
@@ -660,6 +661,253 @@ Future: Self-organizing networks, emergent capabilities, distributed intelligenc
 ```
 
 This demonstrates the **complete journey from simple function calls to autonomous AI ecosystems**—the future of AI system architecture.
+
+## 🔌 MCP Implementation - Production Ready
+
+### **Headless MCP Server Implementation**
+
+We've created a **production-ready MCP server** that follows the Model Context Protocol specification exactly, making our weather/news agent discoverable and callable by any MCP client.
+
+#### **🏗️ Architecture Overview**
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   MCP Client    │◄──►│   MCP Server     │◄──►│  Weather/News   │
+│  (Any AI Model) │    │  (Headless)      │    │     APIs        │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
+
+#### **📁 File Structure**
+```
+guru_gpt/
+├── mcp_server.py          # Headless MCP server (stdio transport)
+├── mcp_client.py          # Command-line test client
+├── mcp_client_ui.py       # Streamlit client UI
+├── app.py                 # Main app with MCP client tab
+└── src/modules/
+    └── mcp_server.py      # Original MCP UI components
+```
+
+### **🚀 Quick Start Guide**
+
+#### **1. Start the MCP Server**
+```bash
+# Headless server (stdio transport)
+python mcp_server.py
+
+# Server runs continuously, ready for MCP client connections
+```
+
+#### **2. Test with Command-Line Client**
+```bash
+# Run comprehensive MCP tests
+python mcp_client.py
+
+# Expected output:
+# ✅ MCP Server started
+# ✅ Initialize successful
+# ✅ Found 2 tools: get_weather, get_news
+# ✅ Weather tool successful
+# ✅ News tool successful
+# ✅ Found 2 cached resources
+# ✅ Found 2 prompts: weather_summary, news_brief
+# 🎉 MCP Server testing completed!
+```
+
+#### **3. Test with Interactive UI**
+```bash
+# Start Streamlit client UI
+streamlit run mcp_client_ui.py
+
+# Features:
+# - Server control (start/stop/restart)
+# - Tool discovery and execution
+# - Resource caching demonstration
+# - Prompt template testing
+# - Real-time MCP protocol testing
+```
+
+### **🔧 MCP Protocol Compliance**
+
+#### **✅ Full MCP Specification Support**
+- **Protocol Version**: 2024-11-05
+- **Transport**: stdio (JSON-RPC 2.0)
+- **Lifecycle**: initialize, capabilities, server info
+- **Tools**: list, call with full schemas
+- **Resources**: list, read with caching
+- **Prompts**: list, get with templates
+
+#### **🛠️ Available MCP Tools**
+
+**get_weather:**
+```json
+{
+  "name": "get_weather",
+  "description": "Get weather information for a specific location",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "location": {"type": "string", "description": "Location to get weather for"},
+      "weather_type": {"type": "string", "enum": ["Current Weather", "5-Day Forecast", "Weather Summary"]}
+    },
+    "required": ["location"]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "location": {"type": "string"},
+      "temperature": {"type": "string"},
+      "condition": {"type": "string"},
+      "ai_summary": {"type": "string"},
+      "recommendations": {"type": "array", "items": {"type": "string"}}
+    }
+  }
+}
+```
+
+**get_news:**
+```json
+{
+  "name": "get_news",
+  "description": "Get news articles for a specific category and country",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "category": {"type": "string", "enum": ["general", "business", "technology", "health", "science", "sports", "entertainment"]},
+      "country": {"type": "string", "enum": ["us", "gb", "ca", "au", "fr", "de", "in", "jp"]},
+      "article_count": {"type": "integer", "minimum": 5, "maximum": 20, "default": 10}
+    },
+    "required": ["category", "country"]
+  }
+}
+```
+
+#### **📚 Available MCP Resources**
+- **Caching**: All tool results are automatically cached
+- **URIs**: `agent://get_weather/location_Paris, France/weather_type_Current Weather`
+- **MIME Type**: `application/json`
+- **Retrieval**: `resources/read` returns cached JSON data
+
+#### **📝 Available MCP Prompts**
+- **weather_summary**: AI weather summary template with city/window variables
+- **news_brief**: AI news briefing template with topic/region variables
+
+### **🎯 Real-World Usage Examples**
+
+#### **Integration with Claude Desktop**
+```json
+// Claude Desktop MCP configuration
+{
+  "mcpServers": {
+    "guru-gpt-weather-news": {
+      "command": "python",
+      "args": ["/path/to/guru_gpt/mcp_server.py"]
+    }
+  }
+}
+```
+
+#### **Integration with Any MCP Client**
+```python
+# Example: Using our MCP server from any Python application
+import subprocess
+import json
+
+# Start MCP server
+server = subprocess.Popen(
+    ["python", "mcp_server.py"],
+    stdin=subprocess.PIPE,
+    stdout=subprocess.PIPE,
+    text=True
+)
+
+# Send MCP request
+request = {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+        "name": "get_weather",
+        "arguments": {
+            "location": "Tokyo, Japan",
+            "weather_type": "Current Weather"
+        }
+    }
+}
+
+server.stdin.write(json.dumps(request) + "\n")
+server.stdin.flush()
+
+# Read response
+response = json.loads(server.stdout.readline())
+print(response["result"]["structuredContent"])
+```
+
+### **💼 Business Value of MCP Implementation**
+
+#### **For AI Developers**
+- **Zero Integration**: AI models can discover and use tools automatically
+- **Standardized Protocol**: Works with any MCP-compatible AI system
+- **Tool Marketplace**: Publish tools that work across all AI platforms
+- **Rapid Development**: Focus on tool logic, not integration
+
+#### **For Enterprises**
+- **Future-Proof**: MCP is the emerging standard for AI-tool communication
+- **Vendor Agnostic**: Works with GPT, Claude, Gemini, and future models
+- **Scalable Architecture**: Easy to add new tools and capabilities
+- **Professional Grade**: Production-ready implementation with proper error handling
+
+#### **For AI Systems**
+- **Autonomous Discovery**: AI finds and learns about new capabilities
+- **Intelligent Orchestration**: AI combines multiple tools for complex tasks
+- **Error Recovery**: Graceful handling of tool failures and fallbacks
+- **Resource Management**: Efficient caching and resource utilization
+
+### **🔬 Technical Implementation Details**
+
+#### **MCP Server Architecture**
+```python
+class MCPWeatherNewsServer:
+    def __init__(self):
+        self.protocol_version = "2024-11-05"
+        self.capabilities = {
+            "tools": {"listChanged": False},
+            "resources": {"listChanged": False},
+            "prompts": {"listChanged": False}
+        }
+    
+    async def handle_request(self, request):
+        # JSON-RPC 2.0 request handling
+        # Tool discovery and execution
+        # Resource caching and retrieval
+        # Prompt template management
+```
+
+#### **Error Handling & Recovery**
+- **JSON-RPC 2.0 Errors**: Proper error codes and messages
+- **Tool Failures**: Graceful degradation with mock data
+- **API Fallbacks**: OpenWeatherMap → wttr.in → mock data
+- **Resource Caching**: Persistent storage of tool results
+
+#### **Performance Features**
+- **Async Operations**: Non-blocking API calls
+- **Resource Caching**: Avoid redundant API calls
+- **Connection Pooling**: Efficient HTTP client usage
+- **Memory Management**: Proper cleanup and resource disposal
+
+### **🎓 Learning Outcomes**
+
+By studying this MCP implementation, you'll understand:
+
+1. **Protocol Design**: How to implement standardized AI-tool communication
+2. **JSON-RPC 2.0**: Proper request/response handling for AI systems
+3. **Tool Schemas**: How to describe capabilities for AI consumption
+4. **Resource Management**: Caching and retrieval strategies
+5. **Error Handling**: Graceful failure and recovery patterns
+6. **Production Deployment**: Headless server architecture
+7. **Client Integration**: How AI systems discover and use tools
+
+This demonstrates the **complete evolution from simple APIs to autonomous AI ecosystems**—the future of AI system architecture.
 
 ## Interview Preparation Value
 
