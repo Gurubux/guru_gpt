@@ -1239,7 +1239,7 @@ User → Load Balancer → GPU Cluster → Local Model → Response
 - Use Cases: High-volume, sensitive data
 - Infrastructure: GPU servers, model storage
 
-### 105-106. Local GPT Powered LLM System Design
+### 105. Local GPT Powered LLM System Design
 
 **Answer:**
 
@@ -1276,6 +1276,102 @@ graph TB
 - **Throughput**: 10-50 requests/second
 - **Latency**: 100-500ms
 - **Concurrent Users**: 50-200
+
+### 106. Cloud GPT Powered LLM System Design
+
+**Answer:**
+
+#### Cloud System Architecture
+```mermaid
+graph TB
+    A[Users] --> B[CloudFront CDN]
+    B --> C[API Gateway]
+    C --> D[Load Balancer]
+    D --> E[ECS Fargate Cluster]
+    E --> F[GPT API Service]
+    F --> G[OpenAI API]
+    F --> H[Vector Database]
+    H --> I[Pinecone/Weaviate]
+    F --> J[Cache Layer]
+    J --> K[ElastiCache Redis]
+    F --> L[Database]
+    L --> M[RDS PostgreSQL]
+    F --> N[File Storage]
+    N --> O[S3 Bucket]
+    E --> P[Monitoring]
+    P --> Q[CloudWatch]
+```
+
+#### Alternative Cloud Architecture (Serverless)
+```mermaid
+graph TB
+    A[Users] --> B[CloudFront]
+    B --> C[API Gateway]
+    C --> D[Lambda Functions]
+    D --> E[Bedrock Service]
+    E --> F[Claude/GPT Models]
+    D --> G[DynamoDB]
+    D --> H[S3 Storage]
+    D --> I[Vector DB]
+    I --> J[Pinecone]
+    D --> K[Step Functions]
+    K --> L[Workflow Orchestration]
+```
+
+#### Cost Analysis - ECS Fargate Architecture
+**Monthly Costs:**
+- **ECS Fargate**: 
+  - 2 vCPU, 4GB RAM: $0.04048/vCPU-hour × 2 × 24 × 30 = $58
+  - 4 vCPU, 8GB RAM: $0.04048/vCPU-hour × 4 × 24 × 30 = $116
+- **Application Load Balancer**: $16.20 + $0.008/LCU-hour = $22
+- **RDS PostgreSQL (db.t3.medium)**: $150/month
+- **ElastiCache Redis (cache.t3.micro)**: $50/month
+- **S3 Storage (100GB)**: $2.30/month
+- **CloudWatch Logs**: $5-20/month
+- **OpenAI API**: $0.015/1k tokens × 1M tokens = $15/month
+- **Pinecone Vector DB**: $70/month (Starter plan)
+
+**Total Monthly Cost: $383-441**
+
+#### Cost Analysis - Serverless Architecture
+**Monthly Costs:**
+- **Lambda Functions**: 
+  - 1M requests: $0.20
+  - 1M GB-seconds: $0.0000166667 × 1M = $16.67
+- **API Gateway**: $3.50 per 1M requests = $3.50
+- **DynamoDB**: $0.25/GB + $1.25/1M writes = $25
+- **S3 Storage**: $2.30/month
+- **Bedrock API**: $0.015/1k tokens × 1M tokens = $15/month
+- **Pinecone Vector DB**: $70/month
+- **Step Functions**: $0.000025/state transition × 10k = $0.25
+
+**Total Monthly Cost: $133**
+
+#### Performance Comparison
+| Architecture | Latency | Throughput | Scalability | Cost |
+|-------------|---------|------------|-------------|------|
+| ECS Fargate | 200-500ms | 100-500 req/s | Manual scaling | $383-441/month |
+| Serverless | 100-300ms | 1000+ req/s | Auto scaling | $133/month |
+| Local GPU | 100-500ms | 10-50 req/s | Hardware limited | $500-700/month |
+
+#### Use Case Recommendations
+**ECS Fargate:**
+- Production applications
+- Predictable traffic patterns
+- Need for persistent connections
+- Custom model requirements
+
+**Serverless:**
+- Variable traffic patterns
+- Cost optimization priority
+- Rapid prototyping
+- Event-driven applications
+
+**Local GPU:**
+- Data privacy requirements
+- High-volume processing
+- Custom model fine-tuning
+- Offline capabilities
 
 ### 107. LLaMA Model, Claude Model - Local and Cloud
 
