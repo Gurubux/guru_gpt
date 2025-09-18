@@ -173,13 +173,12 @@ def main():
             - Future-proof architecture
             """)
     
-    with tab6:
-        # Initialize fine-tuning demo
-        if "fine_tuning_demo" not in st.session_state:
-            st.session_state.fine_tuning_demo = FineTuningDemo()
-        
-        # Render fine-tuning interface
-        st.session_state.fine_tuning_demo.render_interface()
+    # with tab6:
+    #     # Initialize fine-tuning demo
+    #     if "fine_tuning_demo" not in st.session_state:
+    #         st.session_state.fine_tuning_demo = FineTuningDemo()
+    #     # Render fine-tuning interface
+    #     st.session_state.fine_tuning_demo.render_interface()
 
 
 def handle_chat_input(selected_model: str, parameters: dict):
