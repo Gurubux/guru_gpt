@@ -335,19 +335,21 @@ Below are **three progressively richer cloud designs** you can pitch in an inter
 
 ```mermaid
 flowchart LR
-    U[User (Web/Mobile)] -->|HTTPS| FE[Frontend (Static Hosting)]
-    FE -->|REST/GraphQL| BE[Backend (Cloud Function/Lambda)]
-    BE -->|AuthN + Rate Limit| AGW[API Gateway/WAF]
-    BE -->|LLM request (tokens)| LLM[(LLM Provider API\n(OpenAI/Claude/Bedrock))]
-    BE -->|Store chats| DB[(RDS/Cloud SQL)]
-    BE -->|Store files| OBJ[(S3/Blob)]
-    subgraph Cloud
-    FE
-    AGW
-    BE
-    DB
-    OBJ
-    end
+  U[User Web/Mobile]
+  FE[Frontend Static Hosting]
+  BE[Backend Cloud Function or Lambda]
+  AGW[API Gateway or WAF]
+  LLM[LLM Provider API<br/>OpenAI / Claude / Bedrock]
+  DB[(RDS or Cloud SQL)]
+  OBJ[(Object Storage S3/Blob)]
+
+  U -->|HTTPS| FE
+  FE -->|REST/GraphQL| BE
+  BE -->|AuthN + Rate Limit| AGW
+  BE -->|LLM request (tokens)| LLM
+  BE -->|Store chats| DB
+  BE -->|Store files| OBJ
+
 ```
 
 **Pseudocode (Cloud Function):**
