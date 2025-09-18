@@ -541,3 +541,118 @@ sequenceDiagram
 ---
 
 If you want, I can adapt these diagrams to **AWS**, **Azure**, or **GCP** notation and attach **ready-to-present slides**.
+
+
+
+You're right — those mermaid blocks had a few GitHub-incompatible bits (newline escapes `\n`, mixed bracket shapes like `[(`, and nodes on the same line as `flowchart ...`).
+Here are **fixed, GitHub-compatible Mermaid diagrams** for the three cloud designs + a request flow. I also re-stated the quick cost ranges for completeness.
+
+---
+
+## A) Lean & Fast — API-Only (no vector DB)
+
+```mermaid
+flowchart LR
+  U[User Web/Mobile]
+  FE[Frontend Static Hosting]
+  BE[Backend Cloud Function or Lambda]
+  AGW[API Gateway or WAF]
+  LLM[LLM Provider API<br/>OpenAI / Claude / Bedrock]
+  DB[(RDS or Cloud SQL)]
+  OBJ[(Object Storage S3/Blob)]
+
+  U -->|HTTPS| FE
+  FE -->|REST/GraphQL| BE
+  BE -->|AuthN + Rate Limit| AGW
+  BE -->|LLM request (tokens)| LLM
+  BE -->|Store chats| DB
+  BE -->|Store files| OBJ
+```
+
+**Cost (light traffic):** \~\$50–\$250 infra + **tokens** (dominant).
+
+---
+
+## B) RAG-Ready — Search Over Your Docs (Vector DB + Embeddings)
+
+```mermaid
+flowchart TD
+  A[User] --> B[Frontend]
+  B --> C[Backend API]
+  C --> G[API Gateway/WAF]
+
+  C -->|Semantic search| VDB[Vector DB<br/>Pinecone / OpenSearch / pgvector]
+  C -->|Fetch chunks| STOR[(S3 / Blob Storage)]
+  C -->|RAG prompt with context| LLM[LLM Provider API]
+
+  subgraph Ingestion Pipeline
+    U1[Docs: PDFs, HTML, Confluence] --> E1[ETL / Chunk]
+    E1 --> EM[Embedder API<br/>Bedrock / Hosted / Local]
+    EM --> VDB
+    E1 --> STOR
+  end
+```
+
+**Cost (steady state, light ingest):** \~\$200–\$900 infra + **tokens** (dominant).
+(Embeddings one-time/periodic; vector DB hosting sized to need.)
+
+---
+
+## C) Enterprise-Grade — Private/VPC + Bedrock (or Azure OpenAI)
+
+```mermaid
+flowchart LR
+  U[User via VPN/SSO]
+  FE[Frontend behind ALB + WAF]
+  BE[API on ECS/EKS or Lambda]
+  SEC[Secrets Manager / KMS]
+  LLM[Bedrock or Azure OpenAI via PrivateLink/VNet]
+  VDB[Vector DB in VPC<br/>OpenSearch / pgvector]
+  RDS[(RDS / Cloud SQL)]
+  S3[(S3 Private Bucket)]
+  MON[CloudWatch / Logs]
+
+  U --> FE --> BE
+  BE --> SEC
+  BE --> LLM
+  BE --> VDB
+  BE --> RDS
+  BE --> S3
+  BE --> MON
+  MON --> SEC
+```
+
+**Cost (light):** \~\$250–\$1.2k infra + **tokens** (dominant).
+(You’re paying for VPC isolation, PrivateLink/VNet, logging, managed search.)
+
+---
+
+## Request Flow (Serverless Sequence)
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant FE as Frontend
+  participant API as Serverless API
+  participant VDB as Vector DB
+  participant LLM as LLM Provider
+
+  User->>FE: Enter prompt
+  FE->>API: POST /ask (JWT)
+  API->>VDB: semantic_search(top_k=5)
+  VDB-->>API: relevant chunks
+  API->>LLM: chat({question + chunks})
+  LLM-->>API: answer
+  API-->>FE: answer + citations
+  FE-->>User: Render response
+```
+
+---
+
+### One-Line Cost Cheat Sheet
+
+* **Prototype (A):** \~\$50–\$250 + tokens
+* **Knowledge bot (B):** \~\$200–\$900 + tokens
+* **Enterprise (C):** \~\$250–\$1.2k + tokens
+
+If you want, I can swap in **AWS/Azure/GCP native icons** or tailor to your current stack (Bedrock vs Azure OpenAI, OpenSearch vs Pinecone, etc.).
