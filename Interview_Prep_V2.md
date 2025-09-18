@@ -945,7 +945,8 @@ Here’s a **clean table** of popular LLM families showing **where they can run 
 | **Jurassic-2 (AI21)**                                        | ❌ No                                                                                        | ✅ Yes (AI21 API, Bedrock)                                                                            | Cloud only                                                                        |
 | **GPT4All curated models (LLaMA, Mistral, Falcon variants)** | ✅ Yes (desktop app, runs on CPU/GPU locally)                                                | ❌ Not natively, but many of the base models are on cloud providers separately                        | Local: GPT4All desktop app                                                        |
 | **Phi-3 (Microsoft)**                                        | ✅ Yes (small models released, can run via HF or Ollama)                                     | ✅ Yes (Azure AI Studio / HuggingFace Inference)                                                      | Local: HF, Ollama; Cloud: Azure AI Studio                                         |
-
+| **Perplexity (PPLX models)**        | ❌ No                                                                                        | ✅ Yes (Perplexity App & API, some via **Together AI**)                                     | Cloud only                                                           |
+| **Grok (xAI / Elon Musk)**          | ❌ No                                                                                        | ✅ Yes (currently via **X Premium+ subscription**, limited API access being rolled out)     | Cloud only                                                           |
 ---
 
 ## 🔑 Takeaways
