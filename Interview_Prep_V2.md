@@ -549,7 +549,7 @@ Here are **fixed, GitHub-compatible Mermaid diagrams** for the three cloud desig
 
 ---
 
-## A) Lean & Fast — API-Only (no vector DB)
+## A) Lean & Fast — API-Only (fixed Mermaid)
 
 ```mermaid
 flowchart LR
@@ -557,21 +557,23 @@ flowchart LR
   FE[Frontend Static Hosting]
   BE[Backend Cloud Function or Lambda]
   AGW[API Gateway or WAF]
-  LLM[LLM Provider API<br/>OpenAI / Claude / Bedrock]
+  LLM[LLM Provider API: OpenAI / Claude / Bedrock]
   DB[(RDS or Cloud SQL)]
-  OBJ[(Object Storage S3/Blob)]
+  OBJ[(Object Storage S3 or Blob)]
 
   U -->|HTTPS| FE
-  FE -->|REST/GraphQL| BE
-  BE -->|AuthN + Rate Limit| AGW
-  BE -->|LLM request (tokens)| LLM
+  FE -->|REST or GraphQL| BE
+  BE -->|Auth and Rate Limit| AGW
+  BE -->|LLM request| LLM
   BE -->|Store chats| DB
   BE -->|Store files| OBJ
 ```
 
-**Cost (light traffic):** \~\$50–\$250 infra + **tokens** (dominant).
+If you still see issues, two ultra-compatible tweaks:
 
----
+* Change node labels to plain words only (e.g., `LLM[LLM API]`).
+* Remove all edge labels: `U --> FE`, `FE --> BE`, etc.
+
 
 ## B) RAG-Ready — Search Over Your Docs (Vector DB + Embeddings)
 
