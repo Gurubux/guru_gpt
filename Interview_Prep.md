@@ -1090,6 +1090,1047 @@ class CustomerServiceBot:
 
 ---
 
+## GPT Parameters & Configuration
+
+### 101. GPT Parameters - Default, Range, Meaning, Technicality
+
+**Answer:**
+
+#### a. Temperature
+- **Default**: 1.0
+- **Range**: 0.0 to 2.0
+- **Meaning**: Controls randomness in output generation
+- **Technical Details**:
+  ```python
+  # Temperature scaling formula
+  scaled_logits = logits / temperature
+  probabilities = softmax(scaled_logits)
+  ```
+- **Low (0.1-0.3)**: More deterministic, focused responses
+- **Medium (0.7-1.0)**: Balanced creativity and consistency
+- **High (1.2-2.0)**: More creative, diverse responses
+
+#### b. Top-k
+- **Default**: 50
+- **Range**: 1 to 1000
+- **Meaning**: Limits sampling to k most likely tokens
+- **Technical Details**:
+  ```python
+  def top_k_sampling(logits, k):
+      top_k_logits, top_k_indices = torch.topk(logits, k)
+      probabilities = softmax(top_k_logits)
+      return sample_from_distribution(probabilities, top_k_indices)
+  ```
+- **Low (1-10)**: Very focused, predictable
+- **Medium (20-50)**: Balanced selection
+- **High (100-1000)**: More diverse vocabulary
+
+#### c. Top-p (Nucleus Sampling)
+- **Default**: 1.0
+- **Range**: 0.0 to 1.0
+- **Meaning**: Dynamic token selection based on cumulative probability
+- **Technical Details**:
+  ```python
+  def top_p_sampling(logits, p):
+      sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+      cumulative_probs = torch.cumsum(softmax(sorted_logits), dim=-1)
+      cutoff = torch.sum(cumulative_probs <= p)
+      return sample_from_top_tokens(sorted_logits[:cutoff], sorted_indices[:cutoff])
+  ```
+- **Low (0.1-0.3)**: Very focused responses
+- **Medium (0.7-0.9)**: Balanced creativity
+- **High (0.95-1.0)**: Maximum diversity
+
+### 102. Different Latest GPT Models and Their Purpose
+
+**Answer:**
+
+#### Text Generation Models
+- **GPT-4o**: Latest multimodal model, best reasoning, vision capabilities
+- **GPT-4o Mini**: Cost-effective version of GPT-4o, good performance
+- **GPT-4 Turbo**: Long context (128k tokens), detailed analysis
+- **GPT-3.5 Turbo**: Fast, cost-effective for simple tasks
+
+#### Specialized Models
+- **GPT-4 Vision**: Image analysis and description
+- **GPT-4 Code**: Code generation and debugging
+- **GPT-4 Function Calling**: Tool and function integration
+
+#### Model Comparison
+| Model | Context Length | Best For | Cost |
+|-------|---------------|----------|------|
+| GPT-4o | 128k | Complex reasoning, multimodal | High |
+| GPT-4o Mini | 128k | Cost-sensitive applications | Medium |
+| GPT-4 Turbo | 128k | Long documents, analysis | High |
+| GPT-3.5 Turbo | 16k | Simple tasks, fast responses | Low |
+
+### 103. GPT Models Context Length, Input Output Token Limits
+
+**Answer:**
+
+#### Context Length Limits
+- **GPT-4o**: 128,000 tokens
+- **GPT-4o Mini**: 128,000 tokens
+- **GPT-4 Turbo**: 128,000 tokens
+- **GPT-3.5 Turbo**: 16,000 tokens
+
+#### Token Usage Guidelines
+```python
+# Token counting example
+def estimate_tokens(text):
+    # Rough estimation: 1 token ≈ 4 characters
+    return len(text) // 4
+
+# Context management
+def manage_context(messages, max_tokens=120000):
+    total_tokens = sum(estimate_tokens(msg) for msg in messages)
+    if total_tokens > max_tokens:
+        # Remove oldest messages to fit within limit
+        while total_tokens > max_tokens and len(messages) > 1:
+            removed = messages.pop(0)
+            total_tokens -= estimate_tokens(removed)
+    return messages
+```
+
+#### Input/Output Considerations
+- **Input**: System prompt + user messages + conversation history
+- **Output**: Generated response (typically 100-2000 tokens)
+- **Reserve**: Leave 10-20% buffer for output generation
+- **Chunking**: Split long documents into manageable pieces
+
+### 104. 3 Ways to Deploy a GPT Powered LLM
+
+**Answer:**
+
+#### 1. Small Context Deployment (API-based)
+**Architecture:**
+```
+User → API Gateway → Load Balancer → GPT API → Response
+```
+**Characteristics:**
+- Context: 4k-16k tokens
+- Cost: $0.002-0.02 per 1k tokens
+- Use Cases: Simple chatbots, Q&A systems
+- Infrastructure: Minimal, API calls only
+
+#### 2. Large Context Deployment (Hybrid)
+**Architecture:**
+```
+User → API Gateway → Context Manager → GPT API → Response
+                ↓
+            Vector DB (Pinecone/Weaviate)
+```
+**Characteristics:**
+- Context: 32k-128k tokens
+- Cost: $0.01-0.10 per 1k tokens
+- Use Cases: Document analysis, RAG systems
+- Infrastructure: Vector database, context management
+
+#### 3. In-house Deployment (Self-hosted)
+**Architecture:**
+```
+User → Load Balancer → GPU Cluster → Local Model → Response
+                ↓
+            Model Storage (S3/HDFS)
+```
+**Characteristics:**
+- Context: Unlimited (hardware dependent)
+- Cost: $5000-50000/month (hardware)
+- Use Cases: High-volume, sensitive data
+- Infrastructure: GPU servers, model storage
+
+### 105-106. Local GPT Powered LLM System Design
+
+**Answer:**
+
+#### Simple Local System Design
+```mermaid
+graph TB
+    A[User Interface] --> B[API Gateway]
+    B --> C[Load Balancer]
+    C --> D[Model Server 1]
+    C --> E[Model Server 2]
+    D --> F[GPU Cluster]
+    E --> F
+    F --> G[Model Storage]
+    F --> H[Vector Database]
+    B --> I[Cache Layer]
+    I --> J[Redis]
+```
+
+#### Cost Analysis
+**Hardware Requirements:**
+- **GPU**: 2x RTX 4090 (24GB VRAM each) - $3,000
+- **CPU**: AMD Ryzen 9 7950X - $600
+- **RAM**: 128GB DDR5 - $800
+- **Storage**: 2TB NVMe SSD - $300
+- **Total Hardware**: ~$4,700
+
+**Monthly Operating Costs:**
+- **Electricity**: $200-400/month
+- **Internet**: $100/month
+- **Maintenance**: $200/month
+- **Total Monthly**: $500-700
+
+**Performance:**
+- **Throughput**: 10-50 requests/second
+- **Latency**: 100-500ms
+- **Concurrent Users**: 50-200
+
+### 107. LLaMA Model, Claude Model - Local and Cloud
+
+**Answer:**
+
+#### LLaMA Models
+**Local Deployment:**
+```python
+# LLaMA local setup
+from transformers import LlamaForCausalLM, LlamaTokenizer
+
+model = LlamaForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+tokenizer = LlamaTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
+
+def generate_response(prompt):
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(**inputs, max_length=512)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+```
+
+**Cloud Deployment (HuggingFace):**
+- **Cost**: $0.0006-0.002 per 1k tokens
+- **Infrastructure**: Managed inference endpoints
+- **Scalability**: Auto-scaling based on demand
+
+#### Claude Models
+**Local Deployment:**
+- **Limitation**: Claude models are not open-source
+- **Alternative**: Use open-source alternatives like LLaMA
+
+**Cloud Deployment (Anthropic API):**
+```python
+import anthropic
+
+client = anthropic.Anthropic(api_key="your-api-key")
+
+def claude_generate(prompt):
+    response = client.messages.create(
+        model="claude-3-sonnet-20240229",
+        max_tokens=1000,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.content[0].text
+```
+
+**Cost Comparison:**
+| Model | Local Cost | Cloud Cost | Context Length |
+|-------|------------|------------|----------------|
+| LLaMA-2-7B | $500/month | $0.002/1k tokens | 4k tokens |
+| LLaMA-2-70B | $2000/month | $0.008/1k tokens | 4k tokens |
+| Claude-3-Sonnet | N/A | $0.015/1k tokens | 200k tokens |
+
+### 108. Security Concerns - Local and Cloud
+
+**Answer:**
+
+#### Local Deployment Security
+**Architecture:**
+```mermaid
+graph TB
+    A[User] --> B[VPN Gateway]
+    B --> C[Firewall]
+    C --> D[Load Balancer]
+    D --> E[Model Server]
+    E --> F[Local Database]
+    E --> G[Encrypted Storage]
+```
+
+**Security Features:**
+- **Network Isolation**: Air-gapped environment
+- **Data Encryption**: AES-256 at rest and in transit
+- **Access Control**: Role-based authentication
+- **Audit Logging**: Complete activity tracking
+
+**Limitations:**
+- **Hardware Costs**: High upfront investment
+- **Maintenance**: Requires IT expertise
+- **Scalability**: Limited by hardware capacity
+
+#### Cloud Deployment Security
+**Architecture:**
+```mermaid
+graph TB
+    A[User] --> B[VPN Gateway]
+    B --> C[Cloud Provider]
+    C --> D[VPC]
+    D --> E[Private Subnet]
+    E --> F[Model Endpoint]
+    F --> G[Encrypted Storage]
+```
+
+**Security Features:**
+- **VPC**: Isolated network environment
+- **IAM**: Fine-grained access control
+- **Encryption**: End-to-end encryption
+- **Compliance**: SOC 2, GDPR, HIPAA
+
+**Limitations:**
+- **Data Residency**: May not meet all requirements
+- **Vendor Lock-in**: Dependent on cloud provider
+- **Cost**: Ongoing operational expenses
+
+#### Model-Specific Security Considerations
+
+**GPT Models:**
+- **Data Processing**: Data may be processed by OpenAI
+- **Retention**: Data retained for 30 days
+- **Limitation**: Cannot guarantee complete data isolation
+
+**Claude Models:**
+- **Data Processing**: Data processed by Anthropic
+- **Retention**: Data retained for limited time
+- **Limitation**: Similar to GPT, no complete isolation
+
+**LLaMA Models:**
+- **Local Control**: Complete data control
+- **No External Calls**: Data never leaves premises
+- **Advantage**: Maximum security and privacy
+
+### 109. HuggingFace Knowledge
+
+**Answer:**
+
+#### a. Inference Endpoints - Secure LLM Solution
+**Architecture:**
+```python
+# HuggingFace Inference Endpoints
+from huggingface_hub import InferenceClient
+
+client = InferenceClient("https://your-endpoint.hf.space")
+
+def secure_llm_call(prompt):
+    response = client.text_generation(
+        prompt,
+        max_new_tokens=512,
+        temperature=0.7
+    )
+    return response
+```
+
+**Security Features:**
+- **Private Endpoints**: Not accessible publicly
+- **VPC Integration**: Deploy in your VPC
+- **Encryption**: Data encrypted in transit and at rest
+- **Access Control**: IAM-based authentication
+
+**Cost:**
+- **Small Instance**: $0.60/hour (~$430/month)
+- **Medium Instance**: $1.20/hour (~$860/month)
+- **Large Instance**: $2.40/hour (~$1,720/month)
+
+#### b. Using HuggingFace API
+```python
+# HuggingFace API usage
+import requests
+
+def hf_api_call(prompt, model="microsoft/DialoGPT-medium"):
+    API_URL = f"https://api-inference.huggingface.co/models/{model}"
+    headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+    
+    response = requests.post(API_URL, headers=headers, json={
+        "inputs": prompt,
+        "parameters": {"max_length": 100}
+    })
+    return response.json()
+```
+
+#### c. HuggingFace Local Models
+```python
+# Local model deployment
+from transformers import pipeline
+
+# Load model locally
+generator = pipeline("text-generation", model="gpt2")
+
+def local_generation(prompt):
+    result = generator(prompt, max_length=100, num_return_sequences=1)
+    return result[0]["generated_text"]
+```
+
+**Advantages:**
+- **Complete Control**: Data never leaves your environment
+- **Cost Effective**: No per-token charges
+- **Customization**: Full model modification capabilities
+- **Offline**: Works without internet connection
+
+### 110. AWS Cloud Infrastructure for GPT Powered LLM System
+
+**Answer:**
+
+#### Design 1: Serverless with Bedrock
+**Architecture:**
+```mermaid
+graph TB
+    A[User] --> B[CloudFront CDN]
+    B --> C[API Gateway]
+    C --> D[Lambda Functions]
+    D --> E[Bedrock]
+    E --> F[Claude/GPT Models]
+    D --> G[DynamoDB]
+    D --> H[S3]
+```
+
+**Components:**
+- **Frontend**: React/Vue.js on S3 + CloudFront
+- **Backend**: Lambda functions for API logic
+- **LLM**: AWS Bedrock for model access
+- **Database**: DynamoDB for user data
+- **Storage**: S3 for file storage
+
+**Cost (Monthly):**
+- **Bedrock**: $0.015/1k tokens (~$500/month)
+- **Lambda**: $0.20 per 1M requests (~$100/month)
+- **DynamoDB**: $0.25 per GB (~$50/month)
+- **S3**: $0.023 per GB (~$30/month)
+- **Total**: ~$680/month
+
+**Use Cases**: Startups, MVPs, cost-sensitive applications
+
+#### Design 2: Containerized with ECS
+**Architecture:**
+```mermaid
+graph TB
+    A[User] --> B[ALB]
+    B --> C[ECS Cluster]
+    C --> D[FastAPI Container]
+    D --> E[Bedrock]
+    D --> F[RDS PostgreSQL]
+    D --> G[ElastiCache Redis]
+    D --> H[S3]
+```
+
+**Components:**
+- **Frontend**: Containerized React app
+- **Backend**: FastAPI on ECS Fargate
+- **LLM**: AWS Bedrock
+- **Database**: RDS PostgreSQL
+- **Cache**: ElastiCache Redis
+
+**Cost (Monthly):**
+- **ECS Fargate**: $0.04048 per vCPU hour (~$300/month)
+- **RDS**: db.t3.medium (~$150/month)
+- **ElastiCache**: cache.t3.micro (~$50/month)
+- **Bedrock**: $0.015/1k tokens (~$500/month)
+- **Total**: ~$1,000/month
+
+**Use Cases**: Production applications, medium scale
+
+#### Design 3: Kubernetes with SageMaker
+**Architecture:**
+```mermaid
+graph TB
+    A[User] --> B[CloudFront]
+    B --> C[EKS Cluster]
+    C --> D[Model Serving Pods]
+    D --> E[SageMaker Endpoints]
+    E --> F[Custom Models]
+    D --> G[Aurora PostgreSQL]
+    D --> H[ElastiCache]
+```
+
+**Components:**
+- **Frontend**: Kubernetes-managed React
+- **Backend**: Python services on EKS
+- **LLM**: SageMaker endpoints with custom models
+- **Database**: Aurora PostgreSQL
+- **Cache**: ElastiCache Redis
+
+**Cost (Monthly):**
+- **EKS**: $0.10 per hour (~$75/month)
+- **EC2 Instances**: c5.2xlarge (~$400/month)
+- **SageMaker**: $0.05 per hour (~$360/month)
+- **Aurora**: db.r5.large (~$200/month)
+- **Total**: ~$1,035/month
+
+**Use Cases**: Enterprise applications, high scale, custom models
+
+### 111. AWS Bedrock Details
+
+**Answer:**
+
+#### a. Where Bedrock Fits in LLM System
+**Position in Architecture:**
+```
+User Request → API Gateway → Application Logic → Bedrock → LLM Models → Response
+```
+
+**Key Features:**
+- **Model Access**: Claude, Llama, Titan models
+- **Serverless**: No infrastructure management
+- **Enterprise Security**: VPC, IAM, encryption
+- **Fine-tuning**: Custom model training
+
+#### b. Cost and Infrastructure Scalability
+**Pricing Model:**
+- **Claude 3 Sonnet**: $0.003/1k input tokens, $0.015/1k output tokens
+- **Llama 2 70B**: $0.00265/1k input tokens, $0.0035/1k output tokens
+- **Titan Text**: $0.0008/1k input tokens, $0.0016/1k output tokens
+
+**Scalability:**
+- **Automatic Scaling**: Handles traffic spikes
+- **No Infrastructure**: Managed service
+- **Global Availability**: Multiple regions
+- **High Availability**: 99.9% uptime SLA
+
+#### c. Advantages and Popularity
+**Advantages:**
+- **Enterprise Ready**: Security, compliance, governance
+- **Cost Effective**: Pay-per-use pricing
+- **Easy Integration**: Simple API calls
+- **Model Variety**: Access to multiple providers
+
+**Why Popular:**
+- **No Vendor Lock-in**: Multiple model providers
+- **Compliance**: Meets enterprise requirements
+- **Scalability**: Handles any scale
+- **Cost**: Competitive pricing
+
+### 112. AWS Orchestration of LLM System
+
+**Answer:**
+
+#### a. Step Functions
+**Use Case**: Complex LLM workflows
+```python
+# Step Functions state machine
+{
+  "Comment": "LLM Processing Workflow",
+  "StartAt": "PreprocessInput",
+  "States": {
+    "PreprocessInput": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:region:account:function:preprocess",
+      "Next": "CallBedrock"
+    },
+    "CallBedrock": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::bedrock:invokeModel",
+      "Next": "PostprocessOutput"
+    },
+    "PostprocessOutput": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:region:account:function:postprocess",
+      "End": true
+    }
+  }
+}
+```
+
+#### b. SageMaker
+**Use Case**: Custom model training and deployment
+```python
+# SageMaker endpoint deployment
+from sagemaker.huggingface import HuggingFaceModel
+
+huggingface_model = HuggingFaceModel(
+    model_data="s3://bucket/model.tar.gz",
+    role=role,
+    transformers_version="4.26.0",
+    pytorch_version="1.13.1",
+    py_version="py39"
+)
+
+predictor = huggingface_model.deploy(
+    initial_instance_count=1,
+    instance_type="ml.m5.large"
+)
+```
+
+#### c. Bedrock
+**Use Case**: Managed LLM inference
+```python
+# Bedrock client usage
+import boto3
+
+bedrock = boto3.client('bedrock-runtime')
+
+def call_bedrock(prompt, model_id="anthropic.claude-3-sonnet-20240229-v1:0"):
+    response = bedrock.invoke_model(
+        modelId=model_id,
+        body=json.dumps({
+            "prompt": prompt,
+            "max_tokens_to_sample": 1000
+        })
+    )
+    return json.loads(response['body'].read())
+```
+
+### 113. OLLAMA - Simple Architecture and Usage
+
+**Answer:**
+
+#### Architecture
+```mermaid
+graph TB
+    A[User Interface] --> B[OLLAMA API]
+    B --> C[Model Manager]
+    C --> D[Local Models]
+    D --> E[GPU/CPU]
+    B --> F[Model Registry]
+    F --> G[Model Storage]
+```
+
+**Key Components:**
+- **Model Manager**: Handles model loading/unloading
+- **API Server**: RESTful API for model access
+- **Model Registry**: Manages available models
+- **Inference Engine**: Runs model inference
+
+#### Python LLM Call - Text Generation
+```python
+import requests
+import json
+
+class OllamaClient:
+    def __init__(self, base_url="http://localhost:11434"):
+        self.base_url = base_url
+    
+    def generate_text(self, prompt, model="llama2"):
+        url = f"{self.base_url}/api/generate"
+        data = {
+            "model": model,
+            "prompt": prompt,
+            "stream": False
+        }
+        
+        response = requests.post(url, json=data)
+        return response.json()["response"]
+    
+    def chat(self, messages, model="llama2"):
+        url = f"{self.base_url}/api/chat"
+        data = {
+            "model": model,
+            "messages": messages
+        }
+        
+        response = requests.post(url, json=data)
+        return response.json()["message"]["content"]
+
+# Usage
+client = OllamaClient()
+response = client.generate_text("Explain quantum computing")
+print(response)
+```
+
+#### Python LLM Call - Multimodal
+```python
+import base64
+import requests
+
+def generate_with_image(prompt, image_path, model="llava"):
+    # Encode image
+    with open(image_path, "rb") as image_file:
+        image_data = base64.b64encode(image_file.read()).decode()
+    
+    # Prepare request
+    data = {
+        "model": model,
+        "prompt": prompt,
+        "images": [image_data],
+        "stream": False
+    }
+    
+    response = requests.post("http://localhost:11434/api/generate", json=data)
+    return response.json()["response"]
+
+# Usage
+response = generate_with_image(
+    "Describe this image", 
+    "path/to/image.jpg"
+)
+print(response)
+```
+
+#### Different Ways to Use OLLAMA
+1. **Command Line**: `ollama run llama2`
+2. **Python API**: Using requests library
+3. **Web Interface**: Ollama WebUI
+4. **Docker**: Containerized deployment
+5. **REST API**: Direct HTTP calls
+
+### 114. Claude - Simple Architecture and Usage
+
+**Answer:**
+
+#### Architecture
+```mermaid
+graph TB
+    A[User] --> B[API Gateway]
+    B --> C[Claude API]
+    C --> D[Anthropic Servers]
+    D --> E[Claude Models]
+    E --> F[Response Generation]
+    F --> G[User]
+```
+
+**Key Components:**
+- **API Gateway**: Request routing and authentication
+- **Claude API**: Anthropic's API service
+- **Model Servers**: Hosted Claude models
+- **Response Engine**: Generates and formats responses
+
+#### Python LLM Call - Text Generation
+```python
+import anthropic
+import os
+
+class ClaudeClient:
+    def __init__(self, api_key=None):
+        self.client = anthropic.Anthropic(
+            api_key=api_key or os.getenv("ANTHROPIC_API_KEY")
+        )
+    
+    def generate_text(self, prompt, model="claude-3-sonnet-20240229"):
+        response = self.client.messages.create(
+            model=model,
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.content[0].text
+    
+    def chat(self, messages, model="claude-3-sonnet-20240229"):
+        response = self.client.messages.create(
+            model=model,
+            max_tokens=1000,
+            messages=messages
+        )
+        return response.content[0].text
+
+# Usage
+client = ClaudeClient()
+response = client.generate_text("Write a Python function to sort a list")
+print(response)
+```
+
+#### Python LLM Call - Multimodal
+```python
+import base64
+import anthropic
+
+def claude_vision(prompt, image_path):
+    client = anthropic.Anthropic()
+    
+    # Encode image
+    with open(image_path, "rb") as image_file:
+        image_data = base64.b64encode(image_file.read()).decode()
+    
+    response = client.messages.create(
+        model="claude-3-sonnet-20240229",
+        max_tokens=1000,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": image_data
+                        }
+                    }
+                ]
+            }
+        ]
+    )
+    return response.content[0].text
+
+# Usage
+response = claude_vision("What's in this image?", "image.jpg")
+print(response)
+```
+
+#### Different Ways to Use Claude
+1. **API Integration**: Direct API calls
+2. **SDK Usage**: Python/JavaScript SDKs
+3. **Web Interface**: Claude.ai website
+4. **Third-party Tools**: Various integrations
+5. **Custom Applications**: Build your own interface
+
+### 115. GPT - Simple Architecture and Usage
+
+**Answer:**
+
+#### Architecture
+```mermaid
+graph TB
+    A[User] --> B[OpenAI API]
+    B --> C[Load Balancer]
+    C --> D[GPT Models]
+    D --> E[Response Engine]
+    E --> F[User]
+    B --> G[Rate Limiter]
+    B --> H[Usage Tracker]
+```
+
+**Key Components:**
+- **API Gateway**: OpenAI's API service
+- **Load Balancer**: Distributes requests
+- **GPT Models**: Various model versions
+- **Response Engine**: Generates and formats responses
+
+#### Python LLM Call - Text Generation
+```python
+import openai
+import os
+
+class GPTClient:
+    def __init__(self, api_key=None):
+        self.client = openai.OpenAI(
+            api_key=api_key or os.getenv("OPENAI_API_KEY")
+        )
+    
+    def generate_text(self, prompt, model="gpt-4o-mini"):
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1000,
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+    
+    def chat(self, messages, model="gpt-4o-mini"):
+        response = self.client.chat.completions.create(
+            model=model,
+            messages=messages,
+            max_tokens=1000,
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+
+# Usage
+client = GPTClient()
+response = client.generate_text("Explain machine learning")
+print(response)
+```
+
+#### Python LLM Call - Multimodal
+```python
+import openai
+from openai import OpenAI
+
+def gpt_vision(prompt, image_path):
+    client = OpenAI()
+    
+    with open(image_path, "rb") as image_file:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64.b64encode(image_file.read()).decode()}"
+                            }
+                        }
+                    ]
+                }
+            ],
+            max_tokens=1000
+        )
+    return response.choices[0].message.content
+
+# Usage
+response = gpt_vision("Describe this image", "image.jpg")
+print(response)
+```
+
+#### Different Ways to Use GPT
+1. **API Integration**: Direct API calls
+2. **SDK Usage**: Python/JavaScript SDKs
+3. **Web Interface**: ChatGPT website
+4. **Third-party Tools**: Various integrations
+5. **Custom Applications**: Build your own interface
+
+### 116. Lovable.AI - Basics and Cost
+
+**Answer:**
+
+#### How to Use Lovable.AI
+**Platform Overview:**
+- **Purpose**: AI-powered web application development
+- **Target**: Rapid prototyping and MVP development
+- **Technology**: React, TypeScript, AI-generated code
+
+**Usage Process:**
+1. **Sign Up**: Create account on lovable.dev
+2. **Describe Project**: Tell AI what you want to build
+3. **AI Generation**: Platform generates code automatically
+4. **Customization**: Modify and refine generated code
+5. **Deployment**: Deploy to cloud platforms
+
+**Example Workflow:**
+```python
+# Lovable.AI API usage (pseudo-code)
+import requests
+
+def create_lovable_app(description):
+    response = requests.post("https://api.lovable.dev/apps", json={
+        "description": description,
+        "framework": "react",
+        "features": ["authentication", "database", "api"]
+    })
+    return response.json()
+
+# Usage
+app = create_lovable_app("Build a task management app with user authentication")
+```
+
+#### Cost Implications
+**Pricing Model:**
+- **Free Tier**: Limited projects and features
+- **Pro Plan**: $29/month
+  - Unlimited projects
+  - Advanced AI features
+  - Priority support
+- **Enterprise**: Custom pricing
+  - On-premise deployment
+  - Custom integrations
+  - Dedicated support
+
+**Additional Costs:**
+- **Hosting**: $5-50/month (depending on platform)
+- **Database**: $10-100/month (depending on usage)
+- **Third-party APIs**: Variable based on usage
+- **Custom Development**: $50-200/hour
+
+**Total Monthly Cost:**
+- **Small Project**: $50-100/month
+- **Medium Project**: $100-300/month
+- **Large Project**: $300-1000/month
+
+### 117. Anthropic - Basics and Cost
+
+**Answer:**
+
+#### How to Use Anthropic
+**Platform Overview:**
+- **Purpose**: AI safety and research company
+- **Main Product**: Claude AI assistant
+- **Focus**: Helpful, harmless, and honest AI
+
+**Usage Methods:**
+1. **Claude.ai**: Web interface
+2. **API Integration**: Direct API calls
+3. **SDK Usage**: Python/JavaScript SDKs
+4. **Third-party Tools**: Various integrations
+
+**API Usage:**
+```python
+import anthropic
+
+client = anthropic.Anthropic(api_key="your-api-key")
+
+def claude_chat(message):
+    response = client.messages.create(
+        model="claude-3-sonnet-20240229",
+        max_tokens=1000,
+        messages=[{"role": "user", "content": message}]
+    )
+    return response.content[0].text
+
+# Usage
+response = claude_chat("Explain quantum computing")
+print(response)
+```
+
+#### Cost Implications
+**Pricing Structure:**
+- **Claude 3 Haiku**: $0.25/1M input tokens, $1.25/1M output tokens
+- **Claude 3 Sonnet**: $3/1M input tokens, $15/1M output tokens
+- **Claude 3 Opus**: $15/1M input tokens, $75/1M output tokens
+
+**Cost Examples:**
+- **1M input tokens**: ~750,000 words
+- **1M output tokens**: ~750,000 words
+- **Typical conversation**: 1000-5000 tokens
+- **Cost per conversation**: $0.01-0.10
+
+**Monthly Cost Estimates:**
+- **Light Usage**: $10-50/month
+- **Medium Usage**: $50-200/month
+- **Heavy Usage**: $200-1000/month
+- **Enterprise**: Custom pricing
+
+### 118. Perplexity - Basics and Cost
+
+**Answer:**
+
+#### How to Use Perplexity
+**Platform Overview:**
+- **Purpose**: AI-powered search and research
+- **Key Feature**: Real-time information with citations
+- **Target**: Research, fact-checking, current events
+
+**Usage Methods:**
+1. **Web Interface**: perplexity.ai
+2. **API Integration**: Direct API calls
+3. **Mobile Apps**: iOS and Android
+4. **Browser Extensions**: Chrome, Firefox
+
+**API Usage:**
+```python
+import requests
+
+def perplexity_search(query):
+    url = "https://api.perplexity.ai/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    data = {
+        "model": "llama-3.1-sonar-small-128k-online",
+        "messages": [{"role": "user", "content": query}],
+        "max_tokens": 1000
+    }
+    
+    response = requests.post(url, headers=headers, json=data)
+    return response.json()
+
+# Usage
+result = perplexity_search("Latest developments in AI")
+print(result)
+```
+
+#### Cost Implications
+**Pricing Structure:**
+- **Free Tier**: 5 searches per day
+- **Pro Plan**: $20/month
+  - Unlimited searches
+  - Advanced features
+  - Priority access
+- **Enterprise**: Custom pricing
+  - Team collaboration
+  - Advanced analytics
+  - Custom integrations
+
+**API Pricing:**
+- **Pay-per-use**: $0.20 per 1k tokens
+- **Monthly limits**: Various tiers available
+- **Bulk discounts**: Available for high usage
+
+**Monthly Cost Estimates:**
+- **Free Tier**: $0 (limited usage)
+- **Pro Plan**: $20/month
+- **API Usage**: $10-100/month (depending on usage)
+- **Enterprise**: $100-1000/month
+
+---
+
 ## Conclusion
 
 This comprehensive interview preparation guide covers all the essential topics for an AI Engineer GPT Specialist role. The questions range from fundamental concepts to advanced implementation details, covering:
