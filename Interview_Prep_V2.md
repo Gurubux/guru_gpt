@@ -924,3 +924,38 @@ Response stream:
 ---
 
 If you want, I can convert this into **AWS architecture icons** and a **deployable CDK template** next.
+
+
+
+Here’s a **clean table** of popular LLM families showing **where they can run (Local vs Cloud)** and **how you’d typically access them**.
+
+---
+
+# LLM Models – Local vs Cloud Availability
+
+| Model Family                                                 | Local Option                                                                                | Cloud Option                                                                                         | Typical Providers / Runtimes                                                      |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **LLaMA (Meta, LLaMA-2 / LLaMA-3)**                          | ✅ Yes (download weights; run via **Ollama**, **HuggingFace `transformers`**, **LM Studio**) | ✅ Yes (via **HuggingFace Inference API**, **AWS Bedrock (LLaMA-3)**, **Replicate**, **Together AI**) | Local: Ollama, LM Studio, HF Transformers; Cloud: HuggingFace, Bedrock, Replicate |
+| **Mistral / Mixtral**                                        | ✅ Yes (open weights, runs with **Ollama**, **HF**, **GPT4All**)                             | ✅ Yes (via **HuggingFace Inference API**, **Lepton AI**, **Bedrock (Mixtral)**)                      | Local: Ollama, GPT4All, HF; Cloud: HuggingFace, Bedrock, Together AI              |
+| **Falcon (TII UAE)**                                         | ✅ Yes (open weights, HuggingFace, Ollama)                                                   | ✅ Yes (HuggingFace Inference, AWS SageMaker, Azure Marketplace)                                      | Local: HF, Ollama; Cloud: HF Inference, SageMaker                                 |
+| **Gemma (Google)**                                           | ✅ Yes (weights released, runs in HF / Ollama)                                               | ✅ Yes (via **Google Cloud Vertex AI**)                                                               | Local: HuggingFace, Ollama; Cloud: Google Vertex AI                               |
+| **GPT (OpenAI, GPT-3.5/4/4o)**                               | ❌ No (closed weights; cannot run locally)                                                   | ✅ Yes (via **OpenAI API**, **Azure OpenAI Service**)                                                 | Cloud only                                                                        |
+| **Claude (Anthropic)**                                       | ❌ No (closed weights)                                                                       | ✅ Yes (via **Anthropic API**, **AWS Bedrock**)                                                       | Cloud only                                                                        |
+| **Command-R+ (Cohere)**                                      | ❌ No                                                                                        | ✅ Yes (Cohere API, AWS Bedrock)                                                                      | Cloud only                                                                        |
+| **Jurassic-2 (AI21)**                                        | ❌ No                                                                                        | ✅ Yes (AI21 API, Bedrock)                                                                            | Cloud only                                                                        |
+| **GPT4All curated models (LLaMA, Mistral, Falcon variants)** | ✅ Yes (desktop app, runs on CPU/GPU locally)                                                | ❌ Not natively, but many of the base models are on cloud providers separately                        | Local: GPT4All desktop app                                                        |
+| **Phi-3 (Microsoft)**                                        | ✅ Yes (small models released, can run via HF or Ollama)                                     | ✅ Yes (Azure AI Studio / HuggingFace Inference)                                                      | Local: HF, Ollama; Cloud: Azure AI Studio                                         |
+
+---
+
+## 🔑 Takeaways
+
+* **Local + Cloud:** LLaMA, Mistral, Falcon, Gemma, Phi-3 (open weights).
+* **Cloud only:** GPT (OpenAI), Claude (Anthropic), Command-R (Cohere), Jurassic-2 (AI21).
+* **Local only (friendly desktop runtimes):** GPT4All app (but really wraps open-weight models).
+* **Where to run locally:** **Ollama, HuggingFace Transformers, LM Studio, GPT4All**.
+* **Where to run in cloud:** **HuggingFace Inference API, AWS Bedrock, Azure OpenAI/AI Studio, Google Vertex AI, Replicate, Together AI**.
+
+---
+
+Would you like me to also add a **column with typical hardware needs for local deployment** (e.g., runs on Mac M1, needs 24GB VRAM, etc.), so you can compare feasibility?
