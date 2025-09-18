@@ -658,3 +658,269 @@ sequenceDiagram
 * **Enterprise (C):** \~\$250–\$1.2k + tokens
 
 If you want, I can swap in **AWS/Azure/GCP native icons** or tailor to your current stack (Bedrock vs Azure OpenAI, OpenSearch vs Pinecone, etc.).
+
+
+
+# Agentic AI Framework – 2 AI Agents on AWS Serverless with Bedrock
+
+**Agents:** Weather Agent, News Agent
+**Brain:** Router Agent that interprets the user query, picks the right agent, and composes the final answer with recommendations.
+
+---
+
+## 1) High-Level Cloud Architecture (Serverless + Bedrock)
+
+```mermaid
+flowchart LR
+  U[User]
+  FE[Frontend Web or Mobile]
+  APIGW[API Gateway]
+  LAMBDA[Router Lambda]
+  STEP[Step Functions Orchestrator]
+  GUARD[Bedrock Guardrails]
+  BED[Amazon Bedrock Models]
+  KB[Bedrock Knowledge Base]
+  WAG[Weather Agent Lambda]
+  NAG[News Agent Lambda]
+  WAPI[Weather API Provider]
+  NAPI[News API Provider]
+  DDB[(DynamoDB Sessions and Logs)]
+  S3[(S3 for Artifacts)]
+  OS[OpenSearch optional for logs]
+
+  U --> FE --> APIGW --> LAMBDA --> STEP
+  STEP --> GUARD
+  GUARD --> BED
+  STEP --> WAG --> WAPI
+  STEP --> NAG --> NAPI
+  WAG --> DDB
+  NAG --> DDB
+  LAMBDA --> DDB
+  LAMBDA --> S3
+  DDB --> OS
+  KB --> BED
+```
+
+**What each piece does, briefly**
+
+* **Frontend:** simple chat UI, streams tokens.
+* **API Gateway:** HTTPS entry, auth and throttling.
+* **Router Lambda:** intent detection and tool choice.
+* **Step Functions:** orchestrates multi-step flows and retries.
+* **Bedrock:** LLMs for reasoning and generation; can use Guardrails and Knowledge Base.
+* **Weather Agent Lambda:** calls external weather provider API, normalizes results.
+* **News Agent Lambda:** calls a news API and can enrich with Bedrock KB RAG over curated sources.
+* **DynamoDB:** session state, chat logs, tool traces, user prefs.
+* **S3:** transcripts, cached responses, embeddings dumps.
+* **OpenSearch (optional):** analytics and search over logs.
+* **Bedrock Guardrails:** PII, safety, topic rules.
+* **Bedrock Knowledge Base:** optional retrieval grounding for news summaries over your curated corpus.
+
+---
+
+## 2) Request Flow – Serverless Sequence
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant FE as Frontend
+  participant API as API Gateway
+  participant RT as Router Lambda
+  participant SF as Step Functions
+  participant GR as Bedrock Guardrails
+  participant BR as Bedrock LLM
+  participant W as Weather Agent
+  participant N as News Agent
+  participant D as DynamoDB
+
+  User->>FE: Enter query
+  FE->>API: POST /chat
+  API->>RT: Invoke with query
+  RT->>BR: Classify intent with short prompt
+  BR-->>RT: Intent weather or news
+  RT->>SF: Start flow with intent and query
+  SF->>GR: Check policy rules
+  alt Weather path
+    SF->>W: Fetch weather data
+    W->>D: Log tool call
+    W-->>SF: Weather JSON
+  else News path
+    SF->>N: Fetch news data
+    N->>D: Log tool call
+    N-->>SF: News JSON
+  end
+  SF->>BR: Compose final answer with data
+  BR-->>SF: Draft response
+  SF->>D: Persist response
+  SF-->>RT: Completed response
+  RT-->>API: 200 OK
+  API-->>FE: Streamed answer with recommendations
+```
+
+---
+
+## 3) Agent Roles and Prompts (Layman-friendly)
+
+### Router Agent – decides which agent to call
+
+* **Goal:** Determine if the query is about weather or news, or both.
+* **Signal words:** “weather, temperature, forecast, rain” vs “news, headlines, update, today in”.
+* **Output schema:** `{ "intent": "weather" | "news" | "both", "entities": {...} }`.
+
+**Router Prompt Sketch**
+
+```
+System: You are the Router. Classify the user query as weather or news or both.
+User: {query}
+Assistant: Return a JSON object with fields intent and entities.
+```
+
+### Weather Agent – tool skill
+
+* **Input:** location, date range.
+* **Tool:** Weather API (e.g., Open-Meteo, OpenWeather).
+* **Output:** normalized JSON `{ temp_c, condition, chance_of_rain, uv_index, advice }`.
+* **Recommendation logic:** umbrella, sunscreen, clothing, travel tip.
+
+### News Agent – tool skill
+
+* **Input:** topic, locale, time window.
+* **Tools:** News API and optional Bedrock KB for RAG over curated sources.
+* **Output:** top 3–5 headlines with source, 1-line summary, credibility note.
+* **Recommendation logic:** follow-ups to read, set alerts, related topics.
+
+---
+
+## 4) Pseudocode – Router and Agents
+
+### Router Lambda
+
+```pseudo
+function handler(event):
+  user_id = auth_check(event.headers)
+  query = event.body.text
+  // fast Bedrock call for intent
+  intent_json = bedrock_chat(model="anthropic.claude-3-haiku", messages=[
+    {"role":"system","content":"You route: weather, news, or both. Return JSON."},
+    {"role":"user","content":query}
+  ])
+  intent = parse(intent_json.intent)
+
+  start_input = { "query": query, "user_id": user_id, "intent": intent }
+  exec_arn = step_functions.start("AgentOrchestration", start_input)
+  return stream(exec_arn)  // or poll then return
+```
+
+### Step Functions State Machine (sketch)
+
+* States: Guardrails check -> Choice (weather/news/both) -> Parallel calls if both -> Compose -> Save -> Return.
+
+### Weather Agent Lambda
+
+```pseudo
+function weather_agent(input):
+  loc = resolve_location(input.query)  // quick NER or geocoder
+  wx = call_weather_api(loc)
+  advice = simple_rules(wx)
+  return { "location": loc, "report": wx, "advice": advice }
+```
+
+### News Agent Lambda
+
+```pseudo
+function news_agent(input):
+  topic = extract_topic(input.query)
+  items = call_news_api(topic, region="auto")
+  // optional: enrich with Bedrock KB
+  brief = bedrock_chat(
+    model="amazon.nova-micro" or "claude-3-haiku",
+    messages=[{"role":"system","content":"Summarize into bullet points with sources."},
+              {"role":"user","content":format(items)}]
+  )
+  return { "topic": topic, "headlines": items, "summary": brief }
+```
+
+### Final Composition (Bedrock)
+
+```pseudo
+function compose_answer(context):
+  return bedrock_chat(model="claude-3-sonnet",
+    messages=[
+      {"role":"system","content":"Write a concise helpful answer with recommendations."},
+      {"role":"user","content":json(context)}])
+```
+
+---
+
+## 5) Bedrock Features You Can Use
+
+* **Models:** Claude 3 family for reasoning and routing, Cohere or Meta for alternatives.
+* **Guardrails:** define PII blocks, safety, and topic filters.
+* **Knowledge Bases:** RAG on your curated news corpus to improve summaries and reduce hallucinations.
+* **Agents for Bedrock (optional):** define tools for weather and news; Bedrock can plan and call them.
+
+---
+
+## 6) Data and Security
+
+* **Auth:** Amazon Cognito or JWT from your IdP.
+* **Isolation:** VPC for Lambdas and private endpoints to Bedrock.
+* **KMS:** encrypt tokens, API keys, and DDB at rest.
+* **DynamoDB keys:** `pk = user_id#session`, `sk = timestamp`.
+* **Observability:** CloudWatch logs, traces, and structured tool telemetry.
+* **Rate limiting:** API Gateway usage plans; WAF for IP throttling.
+
+---
+
+## 7) Cost Rough-Cut (light traffic)
+
+* **API Gateway and Lambda:** 10–50 USD
+* **Step Functions:** 5–30 USD
+* **DynamoDB:** 5–50 USD
+* **S3:** 1–10 USD
+* **Bedrock tokens:** dominant cost; depends on traffic and model choice
+* **Third-party APIs:** weather and news often 0–100 USD tiered
+
+> Rule of thumb: infra is cheap; **LLM tokens dominate**. Use small models for routing, bigger for final answers.
+
+---
+
+## 8) Example User Experience
+
+1. User: “What’s the weather in Brighton this evening and any big UK tech news today?”
+2. Router: intent = both, entities = { location: Brighton, time: evening, topic: UK tech }
+3. Orchestrator: parallel calls to Weather Agent and News Agent
+4. Bedrock compose: one friendly message, includes clothing tip and 3 concise headlines with sources
+5. Recommendations: “Set a rain alert for your commute” and “Follow these two sources for ongoing coverage.”
+
+---
+
+## 9) Minimal Frontend Call Pattern
+
+```pseudo
+POST /chat
+{
+  "text": "Weather in Brighton tonight and top UK tech news?"
+}
+
+Response stream:
+  tokens: "Brighton will be cool and breezy..."
+  citations: [...]
+  actions: [
+    {"type":"suggestion","label":"Set rain alert"},
+    {"type":"suggestion","label":"Daily tech digest"}
+  ]
+```
+
+---
+
+## 10) How To Evolve
+
+* Add **memory**: store user location preference and favorite news topics in DynamoDB.
+* Add **alerts**: EventBridge schedules Weather Agent at 7am local; SNS or email notifications.
+* Add **feedback loop**: thumbs up/down saved; tune prompts and routing with analytics.
+* Add **fallbacks**: if a tool fails, degrade gracefully and explain the limitation.
+
+---
+
+If you want, I can convert this into **AWS architecture icons** and a **deployable CDK template** next.
