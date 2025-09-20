@@ -69,31 +69,31 @@ Experience the application in action with these comprehensive demonstrations:
 *RAG Chunking and How top chunks are used + Evaluations Calculated*  
 
 ### 4. 🧪 **Prompt Engineering Lab - Document Summarization**
-![Document Summarization](media/Gif/3_streamlit-app-2025-09-17-03-09-06_RAG_evaluation.gif)    
+![Document Summarization](media/Gif/4_streamlit-app-2025-09-17-03-09-71_Document_Summarization.gif)    
 *Professional prompt templates for generating comprehensive document summaries*
 
 ### 5. 🔍 **Fact Verification System**
-![Fact Verification](media/Gif/streamlit-app-2025-09-17-03-09-60_Fact_Verification.webm)
+![Fact Verification](media/Gif/5_streamlit-app-2025-09-17-03-09-60_Fact_Verification.gif)
 *Verify claims against document content with AI-powered fact-checking*
 
 ### 6. 🎯 **Content Matching Analysis (Resume-Job)**
-![Content Matching](media/Gif/streamlit-app-2025-09-17-03-09-88_Content_Matching_resume-Job.webm)
+![Content Matching](media/Gif/6_streamlit-app-2025-09-17-03-09-79_Content_Matching_resume-Job.gif)
 *Calculate similarity scores between resumes and job descriptions*
 
 ### 7. ❓ **Question Answering System**
-![Q&A System](media/Gif/streamlit-app-2025-09-17-03-09-88-QnA.webm)
+![Q&A System](media/Gif/7_streamlit-app-2025-09-17-03-09-88-QnA.gif)
 *Extract specific information from documents with AI-powered Q&A*
 
 ### 8. 📊 **Deep Content Analysis**
-![Deep Analysis](media/Gif/streamlit-app-2025-09-17-03-09-88_Deep_Content_Analysis.webm)
+![Deep Analysis](media/Gif/8_streamlit-app-2025-09-17-03-09-88_Deep_Content_Analysis.gif)
 *Comprehensive thematic analysis with sentiment and structural evaluation*
 
 ### 9. 🤖 **AI Agent - Weather & News Intelligence**
-![AI Agent](media/Gif/streamlit-app-2025-09-17-03-09-21_AI_Agent.webm)
+![AI Agent](media/Gif/9_streamlit-app-2025-09-17-03-09-30_AI_Agent.gif)
 *Live weather and news fetching with AI-powered summaries and recommendations*
 
 ### 9. 🎯 **Fine-tuning**
-![Fine-tuning](media/Gif/streamlit-app-2025-09-17-03-09-06_RAG_evaluation.webm)
+![Fine-tuning](media/screencapture-localhost-8501-2025-09-17-14_22_36-FineTuning.png)
 *Fine-tuning capabilities*
 
 ---
