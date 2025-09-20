@@ -64,6 +64,10 @@ Experience the application in action with these comprehensive demonstrations:
 ![PDF Processing](media/Gif/2_streamlit-app-2025-09-17-03-09-21_pdf_process_chunks_split.gif)  
 *Upload PDFs, extract text, create intelligent chunks, and use as context for AI conversations*
 
+### 3. 📄 **RAG Evaluation**
+![RAG_Evaluation](media/Gif/3_streamlit-app-2025-09-17-03-09-06_RAG_evaluation.gif)    
+*RAG Chunking and How top chunks are used + Evaluations Calculated*  
+
 ### 4. 🧪 **Prompt Engineering Lab - Document Summarization**
 ![Document Summarization](media/Gif/3_streamlit-app-2025-09-17-03-09-06_RAG_evaluation.gif)    
 *Professional prompt templates for generating comprehensive document summaries*
