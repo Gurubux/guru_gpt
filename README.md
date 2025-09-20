@@ -52,6 +52,48 @@ This application shows exactly how AI can transform business operations, making 
 - **Team Training**: Hands-on learning environment for AI adoption
 - **Proof of Concept**: Working prototype that can be adapted for specific business needs
 
+## 🎬 Live Demo - 9 Use Cases
+
+Experience the application in action with these comprehensive demonstrations:
+
+### 1. 💬 **Simple Chat Assistant**
+![Simple Chat](media/streamlit-app-2025-09-17-03-09-71_simple_chat.webm)
+*Basic GPT conversation with real-time response analytics and cost tracking*
+
+### 2. 📄 **PDF Document Processing & Chunking**
+![PDF Processing](media/streamlit-app-2025-09-17-03-09-30_pdf_process_chunks_split.webm)
+*Upload PDFs, extract text, create intelligent chunks, and use as context for AI conversations*
+
+### 3. 🧪 **Prompt Engineering Lab - Document Summarization**
+![Document Summarization](media/streamlit-app-2025-09-17-03-09-79_Document_Summarization.webm)
+*Professional prompt templates for generating comprehensive document summaries*
+
+### 4. 🔍 **Fact Verification System**
+![Fact Verification](media/streamlit-app-2025-09-17-03-09-60_Fact_Verification.webm)
+*Verify claims against document content with AI-powered fact-checking*
+
+### 5. 🎯 **Content Matching Analysis (Resume-Job)**
+![Content Matching](media/streamlit-app-2025-09-17-03-09-88_Content_Matching_resume-Job.webm)
+*Calculate similarity scores between resumes and job descriptions*
+
+### 6. 📊 **Deep Content Analysis**
+![Deep Analysis](media/streamlit-app-2025-09-17-03-09-88_Deep_Content_Analysis.webm)
+*Comprehensive thematic analysis with sentiment and structural evaluation*
+
+### 7. ❓ **Question Answering System**
+![Q&A System](media/streamlit-app-2025-09-17-03-09-88-QnA.webm)
+*Extract specific information from documents with AI-powered Q&A*
+
+### 8. 🤖 **AI Agent - Weather & News Intelligence**
+![AI Agent](media/streamlit-app-2025-09-17-03-09-21_AI_Agent.webm)
+*Live weather and news fetching with AI-powered summaries and recommendations*
+
+### 9. 🎯 **RAG Evaluation & Fine-tuning**
+![RAG Evaluation](media/streamlit-app-2025-09-17-03-09-06_RAG_evaluation.webm)
+*Advanced RAG system evaluation with quality metrics and fine-tuning capabilities*
+
+---
+
 ## Features
 
 - 🤖 **Multi-Model Support**: Choose from GPT-4o, GPT-4o Mini, and GPT-4 Turbo
