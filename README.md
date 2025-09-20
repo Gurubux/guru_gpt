@@ -57,11 +57,11 @@ This application shows exactly how AI can transform business operations, making 
 Experience the application in action with these comprehensive demonstrations:
 
 ### 1. 💬 **Simple Chat Assistant**
-![Simple Chat](media/Gif/1_streamlit-app-2025-09-17-03-09-59_simple_chat.gif)
+![Simple Chat](media/Gif/1_streamlit-app-2025-09-17-03-09-59_simple_chat.gif)  
 *Basic GPT conversation with real-time response analytics and cost tracking*
 
 ### 2. 📄 **PDF Document Processing & Chunking**
-![PDF Processing](media/Gif/2_streamlit-app-2025-09-17-03-09-21_pdf_process_chunks_split.gif)
+![PDF Processing](media/Gif/2_streamlit-app-2025-09-17-03-09-21_pdf_process_chunks_split.gif)  
 *Upload PDFs, extract text, create intelligent chunks, and use as context for AI conversations*
 
 ### 3. 🧪 **Prompt Engineering Lab - Document Summarization**
