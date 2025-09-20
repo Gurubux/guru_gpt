@@ -64,33 +64,33 @@ Experience the application in action with these comprehensive demonstrations:
 ![PDF Processing](media/Gif/2_streamlit-app-2025-09-17-03-09-21_pdf_process_chunks_split.gif)  
 *Upload PDFs, extract text, create intelligent chunks, and use as context for AI conversations*
 
-### 3. 🧪 **Prompt Engineering Lab - Document Summarization**
-![Document Summarization](media/Gif/streamlit-app-2025-09-17-03-09-79_Document_Summarization.webm)
+### 4. 🧪 **Prompt Engineering Lab - Document Summarization**
+![Document Summarization](media\Gif\3_streamlit-app-2025-09-17-03-09-06_RAG_evaluation.gif)
 *Professional prompt templates for generating comprehensive document summaries*
 
-### 4. 🔍 **Fact Verification System**
+### 5. 🔍 **Fact Verification System**
 ![Fact Verification](media/Gif/streamlit-app-2025-09-17-03-09-60_Fact_Verification.webm)
 *Verify claims against document content with AI-powered fact-checking*
 
-### 5. 🎯 **Content Matching Analysis (Resume-Job)**
+### 6. 🎯 **Content Matching Analysis (Resume-Job)**
 ![Content Matching](media/Gif/streamlit-app-2025-09-17-03-09-88_Content_Matching_resume-Job.webm)
 *Calculate similarity scores between resumes and job descriptions*
-
-### 6. 📊 **Deep Content Analysis**
-![Deep Analysis](media/Gif/streamlit-app-2025-09-17-03-09-88_Deep_Content_Analysis.webm)
-*Comprehensive thematic analysis with sentiment and structural evaluation*
 
 ### 7. ❓ **Question Answering System**
 ![Q&A System](media/Gif/streamlit-app-2025-09-17-03-09-88-QnA.webm)
 *Extract specific information from documents with AI-powered Q&A*
 
-### 8. 🤖 **AI Agent - Weather & News Intelligence**
+### 8. 📊 **Deep Content Analysis**
+![Deep Analysis](media/Gif/streamlit-app-2025-09-17-03-09-88_Deep_Content_Analysis.webm)
+*Comprehensive thematic analysis with sentiment and structural evaluation*
+
+### 9. 🤖 **AI Agent - Weather & News Intelligence**
 ![AI Agent](media/Gif/streamlit-app-2025-09-17-03-09-21_AI_Agent.webm)
 *Live weather and news fetching with AI-powered summaries and recommendations*
 
-### 9. 🎯 **RAG Evaluation & Fine-tuning**
-![RAG Evaluation](media/Gif/streamlit-app-2025-09-17-03-09-06_RAG_evaluation.webm)
-*Advanced RAG system evaluation with quality metrics and fine-tuning capabilities*
+### 9. 🎯 **Fine-tuning**
+![Fine-tuning](media/Gif/streamlit-app-2025-09-17-03-09-06_RAG_evaluation.webm)
+*Fine-tuning capabilities*
 
 ---
 
