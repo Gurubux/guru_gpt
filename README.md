@@ -65,7 +65,7 @@ Experience the application in action with these comprehensive demonstrations:
 *Upload PDFs, extract text, create intelligent chunks, and use as context for AI conversations*
 
 ### 4. 🧪 **Prompt Engineering Lab - Document Summarization**
-![Document Summarization](media\Gif\3_streamlit-app-2025-09-17-03-09-06_RAG_evaluation.gif)    
+![Document Summarization](media/Gif/3_streamlit-app-2025-09-17-03-09-06_RAG_evaluation.gif)    
 *Professional prompt templates for generating comprehensive document summaries*
 
 ### 5. 🔍 **Fact Verification System**
